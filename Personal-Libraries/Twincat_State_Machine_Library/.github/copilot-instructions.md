@@ -64,6 +64,24 @@ FB_SequenceStep(
 - **Permissions**: Descriptive + "OK" suffix (`HomePermOK`, `StartPermOK`)
 - **HMI structures**: `<Type>_HMI` suffix for operator interface data
 
+### Encapsulation Pattern
+All function blocks use `{attribute 'hide_all_locals'}` to hide internal variables from online view:
+```st
+{attribute 'hide_all_locals'}
+FUNCTION_BLOCK FB_StateMachine
+VAR_INPUT
+    // Public interface inputs
+END_VAR
+VAR_OUTPUT  
+    // Public interface outputs
+END_VAR
+VAR
+    // All internal variables hidden from online view
+    // No debugging/breakpoints possible on these
+    // Cannot be made persistent
+END_VAR
+```
+
 ### State Machine Logic
 - **Command prioritization**: Abort > Stop > Other commands (mutually exclusive)
 - **Permission checking**: Each state transition validates required permission groups
