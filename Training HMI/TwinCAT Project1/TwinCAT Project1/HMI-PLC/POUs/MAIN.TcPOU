@@ -3,41 +3,95 @@
   <POU Name="MAIN" Id="{4f4444b9-0fc9-41d2-8d8b-6376a7d4acc5}" SpecialFunc="None">
     <Declaration><![CDATA[PROGRAM MAIN
 VAR
-    	
-    
     // State Machine instance
     fbStateMachine : FB_StateMachine;
     
     // HMI interface for state machine
     stateMachineHMI : SM_HMI;
     
-    // Current step for state machine
+    // Current step for state machine - SHARED between state machine and all step programs
     currentStep : ActiveStep;
     
     // State machine command inputs
     smCommands : ST_SM_Commands;
       
-    // Test inputs
-    testAutoIntlk : INT := -1;  // All OK by default
+    // Test inputs for permissions
+    testAutoIntlk : INT := -1;  // All OK by default (-1 = all bits OK)
     testHomePerm : INT := -1;   // All OK by default
     testStartPerm : INT := -1;  // All OK by default
     testProceedPerm : INT := -1; // All OK by default
     
+    // Next step calculation - determined by active sequence programs
+    nextStepFromSequence : DINT;
 
 END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[
-// Call state  
+//=============================================================================
+// MAIN PROGRAM - State Machine Implementation with Sequence Programs
+//=============================================================================
+
+// Execute sequence programs based on current state
+// Each program handles its specific state steps and returns the next step
+nextStepFromSequence := 0;  // Default to no step change
+
+// Call appropriate sequence program based on current state
+IF fbStateMachine.Status.Homing THEN
+    PRG_Homing(
+        CurrentStep := currentStep,
+        StepTimerSeconds := REAL_TO_DINT(fbStateMachine.StepInfo.StepTimerSeconds),
+        RetrySignal := fbStateMachine.outRetry,
+        NextStep => nextStepFromSequence
+    );
+    
+ELSIF fbStateMachine.Status.Running THEN
+    PRG_Running(
+        CurrentStep := currentStep,
+        StepTimerSeconds := REAL_TO_DINT(fbStateMachine.StepInfo.StepTimerSeconds),
+        RetrySignal := fbStateMachine.outRetry,
+        NextStep => nextStepFromSequence
+    );
+    
+ELSIF fbStateMachine.Status.Stopping THEN
+    PRG_Stopping(
+        CurrentStep := currentStep,
+        StepTimerSeconds := REAL_TO_DINT(fbStateMachine.StepInfo.StepTimerSeconds),
+        RetrySignal := fbStateMachine.outRetry,
+        NextStep => nextStepFromSequence
+    );
+    
+ELSIF fbStateMachine.Status.Aborting THEN
+    PRG_Aborting(
+        CurrentStep := currentStep,
+        StepTimerSeconds := REAL_TO_DINT(fbStateMachine.StepInfo.StepTimerSeconds),
+        RetrySignal := fbStateMachine.outRetry,
+        NextStep => nextStepFromSequence
+    );
+END_IF;
+
+// Signal completion when sequence reaches final step
+IF fbStateMachine.Status.Homing AND (nextStepFromSequence = 0) THEN
+    smCommands.CompleteState := TRUE;
+ELSIF fbStateMachine.Status.Running AND (nextStepFromSequence = 0) THEN
+    smCommands.CompleteState := TRUE;
+ELSIF fbStateMachine.Status.Stopping AND (nextStepFromSequence = 0) THEN
+    smCommands.CompleteState := TRUE;
+ELSIF fbStateMachine.Status.Aborting AND (nextStepFromSequence = 0) THEN
+    smCommands.CompleteState := TRUE;
+END_IF;
+
+// Call state machine with step input from active sequence
 fbStateMachine(
     EnableIn := TRUE,              // Enable the state machine
-    cfgAutoRun := FALSE,           // Auto run configuration
+    cfgAutoRun := FALSE,           // Auto run configuration  
     inpAutoIntlk := testAutoIntlk, // Auto interlocks
     inpHomePerm := testHomePerm,   // Home permissions
     inpStartPerm := testStartPerm, // Start permissions
     inpProceedPerm := testProceedPerm, // Proceed permissions
+    NextStep := nextStepFromSequence,  // Next step from active sequence program
     Commands := smCommands,        // Command inputs
     HMI := stateMachineHMI,        // HMI interface
-    CurrentStep := currentStep     // Current step
+    CurrentStep := currentStep     // Current step (shared with sequences)
 );
 
 ]]></ST>
@@ -45,6 +99,8 @@ fbStateMachine(
     <LineIds Name="MAIN">
       <LineId Id="765" Count="13" />
       <LineId Id="223" Count="0" />
+      <LineId Id="18" Count="52" />
+      <LineId Id="2" Count="0" />
     </LineIds>
   </POU>
 </TcPlcObject>

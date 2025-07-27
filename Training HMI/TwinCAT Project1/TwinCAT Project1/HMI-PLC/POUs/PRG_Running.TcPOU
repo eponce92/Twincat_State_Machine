@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.13">
+  <POU Name="PRG_Running" Id="{12345678-1234-1234-1234-123456789002}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM PRG_Running
+VAR_IN_OUT
+    CurrentStep : ActiveStep;  // Shared step structure with state machine
+END_VAR
+
+VAR_INPUT
+    StepTimerSeconds : DINT;   // Timer value from state machine
+    RetrySignal : BOOL;        // Retry signal from state machine
+END_VAR
+
+VAR_OUTPUT
+    NextStep : DINT;           // Next step to transition to
+END_VAR
+
+VAR
+    // Step function blocks for running sequence
+    fbStep3000 : FB_SequenceStep;  // Production Start
+    fbStep3002 : FB_SequenceStep;  // Production Execute
+    
+    // Step permissives (simulation for testing)
+    step3000Perms : INT := -1;     // All OK for step 3000
+    step3002Perms : INT := -1;     // All OK for step 3002
+    
+    // Internal variables
+    stepActive3000 : BOOL;
+    stepActive3002 : BOOL;
+    
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[//=============================================================================
+// PRG_Running - Handles RUNNING state sequence (3000-3999)
+//=============================================================================
+// Step numbering: 3000, 3002 (even numbers)
+// Fault steps: 3001, 3003 (odd numbers, +1 of original)
+
+//=============================================================================
+// SEQUENCE CONTROL LOGIC
+//=============================================================================
+// Initialize sequence when first entering RUNNING state
+IF CurrentStep.Step = 0 THEN
+    NextStep := 3000;  // Start with first running step
+END_IF;
+
+//=============================================================================
+// STEP 3000 - PRODUCTION START
+//=============================================================================
+fbStep3000(
+    inpStep := CurrentStep.Step,
+    cfgStep := 3000,
+    cfgNextStep := 3002,
+    inpStepTimerSeconds := StepTimerSeconds,
+    inpRetry := RetrySignal,
+    inpStepPermissives := step3000Perms,
+    cfgStepTimeout := 12,  // 12 second timeout
+    inpFaultStep := FALSE,
+    ActiveStep := CurrentStep
+);
+stepActive3000 := fbStep3000.outStepActive;
+
+// Step 3000 Active Logic
+IF stepActive3000 THEN
+    // Permissives simulation - Simulate based on timer
+    IF StepTimerSeconds < 5 THEN
+        step3000Perms := 16#FFFE;  // Bit 0 not OK (not ready yet)
+    ELSE
+        step3000Perms := -1;  // All permissives OK
+    END_IF;
+    
+    // HMI configuration and actions
+    CurrentStep.PermsHMI.Name := 'Production Start';
+    CurrentStep.PermsHMI.Desc[0] := 'Raw Material Available';
+    CurrentStep.PermsHMI.Desc[1] := 'Process Temperature OK';
+    CurrentStep.PermsHMI.Desc[2] := 'Quality System Ready';
+    
+    // Add any step-specific actions here
+    // Example: Start production line, initialize process parameters, etc.
+    
+    // Step advancement - Only advance if permissives are OK
+    IF step3000Perms = -1 THEN  // All permissives good
+        NextStep := fbStep3000.outNextStep;
+    END_IF;
+END_IF;
+
+//=============================================================================
+// STEP 3002 - PRODUCTION EXECUTE
+//=============================================================================
+fbStep3002(
+    inpStep := CurrentStep.Step,
+    cfgStep := 3002,
+    cfgNextStep := 0,  // 0 = sequence complete
+    inpStepTimerSeconds := StepTimerSeconds,
+    inpRetry := RetrySignal,
+    inpStepPermissives := step3002Perms,
+    cfgStepTimeout := 20,  // 20 second timeout
+    inpFaultStep := FALSE,
+    ActiveStep := CurrentStep
+);
+stepActive3002 := fbStep3002.outStepActive;
+
+// Step 3002 Active Logic
+IF stepActive3002 THEN
+    // Permissives simulation - Simulate based on timer
+    IF StepTimerSeconds < 15 THEN
+        step3002Perms := 16#FFFD;  // Bit 1 not OK (production not complete)
+    ELSE
+        step3002Perms := -1;  // All permissives OK
+    END_IF;
+    
+    // HMI configuration and actions
+    CurrentStep.PermsHMI.Name := 'Production Execute';
+    CurrentStep.PermsHMI.Desc[0] := 'Production Line Running';
+    CurrentStep.PermsHMI.Desc[1] := 'Quality Checks Passing';
+    CurrentStep.PermsHMI.Desc[2] := 'Output Quality OK';
+    
+    // Add any step-specific actions here
+    // Example: Monitor production process, quality checks, output control, etc.
+    
+    // Step advancement - Only advance if permissives are OK (completion step)
+    IF step3002Perms = -1 THEN  // All permissives good
+        NextStep := fbStep3002.outNextStep;  // Should be 0 for completion
+    END_IF;
+END_IF;
+]]></ST>
+    </Implementation>
+    <LineIds Name="PRG_Running">
+      <LineId Id="1" Count="90" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

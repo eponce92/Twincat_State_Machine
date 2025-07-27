@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.13">
+  <POU Name="PRG_Aborting" Id="{12345678-1234-1234-1234-123456789004}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM PRG_Aborting
+VAR_IN_OUT
+    CurrentStep : ActiveStep;  // Shared step structure with state machine
+END_VAR
+
+VAR_INPUT
+    StepTimerSeconds : DINT;   // Timer value from state machine
+    RetrySignal : BOOL;        // Retry signal from state machine
+END_VAR
+
+VAR_OUTPUT
+    NextStep : DINT;           // Next step to transition to
+END_VAR
+
+VAR
+    // Step function blocks for aborting sequence
+    fbStep5000 : FB_SequenceStep;  // Abort Prepare
+    fbStep5002 : FB_SequenceStep;  // Abort Execute
+    
+    // Step permissives (simulation for testing)
+    step5000Perms : INT := -1;     // All OK for step 5000
+    step5002Perms : INT := -1;     // All OK for step 5002
+    
+    // Internal variables
+    stepActive5000 : BOOL;
+    stepActive5002 : BOOL;
+    
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[//=============================================================================
+// PRG_Aborting - Handles ABORTING state sequence (5000-5999)
+//=============================================================================
+// Step numbering: 5000, 5002 (even numbers)
+// Fault steps: 5001, 5003 (odd numbers, +1 of original)
+
+//=============================================================================
+// SEQUENCE CONTROL LOGIC
+//=============================================================================
+// Initialize sequence when first entering ABORTING state
+IF CurrentStep.Step = 0 THEN
+    NextStep := 5000;  // Start with first aborting step
+END_IF;
+
+//=============================================================================
+// STEP 5000 - ABORT PREPARE
+//=============================================================================
+fbStep5000(
+    inpStep := CurrentStep.Step,
+    cfgStep := 5000,
+    cfgNextStep := 5002,
+    inpStepTimerSeconds := StepTimerSeconds,
+    inpRetry := RetrySignal,
+    inpStepPermissives := step5000Perms,
+    cfgStepTimeout := 5,  // 5 second timeout (quick abort)
+    inpFaultStep := FALSE,
+    ActiveStep := CurrentStep
+);
+stepActive5000 := fbStep5000.outStepActive;
+
+// Step 5000 Active Logic
+IF stepActive5000 THEN
+    // Permissives simulation - Simulate based on timer
+    IF StepTimerSeconds < 2 THEN
+        step5000Perms := 16#FFFE;  // Bit 0 not OK (not ready yet)
+    ELSE
+        step5000Perms := -1;  // All permissives OK
+    END_IF;
+    
+    // HMI configuration and actions
+    CurrentStep.PermsHMI.Name := 'Abort Prepare';
+    CurrentStep.PermsHMI.Desc[0] := 'Emergency Stop Clear';
+    CurrentStep.PermsHMI.Desc[1] := 'Safety Systems Active';
+    CurrentStep.PermsHMI.Desc[2] := 'Personnel Clear';
+    
+    // Add any step-specific actions here
+    // Example: Set emergency stop relays, activate warning lights, etc.
+    
+    // Step advancement - Only advance if permissives are OK
+    IF step5000Perms = -1 THEN  // All permissives good
+        NextStep := fbStep5000.outNextStep;
+    END_IF;
+END_IF;
+
+//=============================================================================
+// STEP 5002 - ABORT EXECUTE  
+//=============================================================================
+fbStep5002(
+    inpStep := CurrentStep.Step,
+    cfgStep := 5002,
+    cfgNextStep := 0,  // 0 = sequence complete
+    inpStepTimerSeconds := StepTimerSeconds,
+    inpRetry := RetrySignal,
+    inpStepPermissives := step5002Perms,
+    cfgStepTimeout := 10,  // 10 second timeout
+    inpFaultStep := FALSE,
+    ActiveStep := CurrentStep
+);
+stepActive5002 := fbStep5002.outStepActive;
+
+// Step 5002 Active Logic
+IF stepActive5002 THEN
+    // Permissives simulation - Simulate based on timer
+    IF StepTimerSeconds < 6 THEN
+        step5002Perms := 16#FFFD;  // Bit 1 not OK (abort not complete)
+    ELSE
+        step5002Perms := -1;  // All permissives OK
+    END_IF;
+    
+    // HMI configuration and actions
+    CurrentStep.PermsHMI.Name := 'Abort Execute';
+    CurrentStep.PermsHMI.Desc[0] := 'Emergency Shutdown Active';
+    CurrentStep.PermsHMI.Desc[1] := 'Systems Securing';
+    CurrentStep.PermsHMI.Desc[2] := 'Safe State Reached';
+    
+    // Add any step-specific actions here
+    // Example: Execute shutdown sequence, secure valves, stop motors, etc.
+    
+    // Step advancement - Only advance if permissives are OK (completion step)
+    IF step5002Perms = -1 THEN  // All permissives good
+        NextStep := fbStep5002.outNextStep;  // Should be 0 for completion
+    END_IF;
+END_IF;
+]]></ST>
+    </Implementation>
+    <LineIds Name="PRG_Aborting">
+      <LineId Id="1" Count="70" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

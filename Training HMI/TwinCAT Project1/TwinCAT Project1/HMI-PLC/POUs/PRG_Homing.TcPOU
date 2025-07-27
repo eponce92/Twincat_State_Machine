@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.13">
+  <POU Name="PRG_Homing" Id="{12345678-1234-1234-1234-123456789001}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM PRG_Homing
+VAR_IN_OUT
+    CurrentStep : ActiveStep;  // Shared step structure with state machine
+END_VAR
+
+VAR_INPUT
+    StepTimerSeconds : DINT;   // Timer value from state machine
+    RetrySignal : BOOL;        // Retry signal from state machine
+END_VAR
+
+VAR_OUTPUT
+    NextStep : DINT;           // Next step to transition to
+END_VAR
+
+VAR
+    // Step function blocks for homing sequence
+    fbStep1000 : FB_SequenceStep;  // Home Initialize
+    fbStep1002 : FB_SequenceStep;  // Home Execute
+    
+    // Step permissives (simulation for testing)
+    step1000Perms : INT := -1;     // All OK for step 1000
+    step1002Perms : INT := -1;     // All OK for step 1002
+    
+    // Internal variables
+    stepActive1000 : BOOL;
+    stepActive1002 : BOOL;
+    
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[//=============================================================================
+// PRG_Homing - Handles HOMING state sequence (1000-1999)
+//=============================================================================
+// Step numbering: 1000, 1002 (even numbers)
+// Fault steps: 1001, 1003 (odd numbers, +1 of original)
+
+//=============================================================================
+// SEQUENCE CONTROL LOGIC
+//=============================================================================
+// Initialize sequence when first entering HOMING state
+IF CurrentStep.Step = 0 THEN
+    NextStep := 1000;  // Start with first homing step
+END_IF;
+
+//=============================================================================
+// STEP 1000 - HOME INITIALIZE
+//=============================================================================
+fbStep1000(
+    inpStep := CurrentStep.Step,
+    cfgStep := 1000,
+    cfgNextStep := 1002,
+    inpStepTimerSeconds := StepTimerSeconds,
+    inpRetry := RetrySignal,
+    inpStepPermissives := step1000Perms,
+    cfgStepTimeout := 10,  // 10 second timeout
+    inpFaultStep := FALSE,
+    ActiveStep := CurrentStep
+);
+stepActive1000 := fbStep1000.outStepActive;
+
+// Step 1000 Active Logic
+IF stepActive1000 THEN
+    // Permissives simulation - Simulate based on timer
+    IF StepTimerSeconds < 3 THEN
+        step1000Perms := 16#FFFE;  // Bit 0 not OK (not ready yet)
+    ELSE
+        step1000Perms := -1;  // All permissives OK
+    END_IF;
+    
+    // HMI configuration and actions
+    CurrentStep.PermsHMI.Name := 'Home Initialize';
+    CurrentStep.PermsHMI.Desc[0] := 'System Ready';
+    CurrentStep.PermsHMI.Desc[1] := 'Home Position Clear';
+    CurrentStep.PermsHMI.Desc[2] := 'Safety Systems OK';
+    
+    // Add any step-specific actions here
+    // Example: Reset position counters, check home sensors, etc.
+    
+    // Step advancement - Only advance if permissives are OK
+    IF step1000Perms = -1 THEN  // All permissives good
+        NextStep := fbStep1000.outNextStep;
+    END_IF;
+END_IF;
+
+//=============================================================================
+// STEP 1002 - HOME EXECUTE
+//=============================================================================
+fbStep1002(
+    inpStep := CurrentStep.Step,
+    cfgStep := 1002,
+    cfgNextStep := 0,  // 0 = sequence complete
+    inpStepTimerSeconds := StepTimerSeconds,
+    inpRetry := RetrySignal,
+    inpStepPermissives := step1002Perms,
+    cfgStepTimeout := 15,  // 15 second timeout
+    inpFaultStep := FALSE,
+    ActiveStep := CurrentStep
+);
+stepActive1002 := fbStep1002.outStepActive;
+
+// Step 1002 Active Logic
+IF stepActive1002 THEN
+    // Permissives simulation - Simulate based on timer
+    IF StepTimerSeconds < 8 THEN
+        step1002Perms := 16#FFFD;  // Bit 1 not OK (homing not complete)
+    ELSE
+        step1002Perms := -1;  // All permissives OK
+    END_IF;
+    
+    // HMI configuration and actions
+    CurrentStep.PermsHMI.Name := 'Home Execute';
+    CurrentStep.PermsHMI.Desc[0] := 'Motors Enabled';
+    CurrentStep.PermsHMI.Desc[1] := 'Home Sensors Active';
+    CurrentStep.PermsHMI.Desc[2] := 'No Emergency Stops';
+    
+    // Add any step-specific actions here
+    // Example: Start homing motion, monitor position feedback, etc.
+    
+    // Step advancement - Only advance if permissives are OK (completion step)
+    IF step1002Perms = -1 THEN  // All permissives good
+        NextStep := fbStep1002.outNextStep;  // Should be 0 for completion
+    END_IF;
+END_IF;
+]]></ST>
+    </Implementation>
+    <LineIds Name="PRG_Homing">
+      <LineId Id="1" Count="90" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

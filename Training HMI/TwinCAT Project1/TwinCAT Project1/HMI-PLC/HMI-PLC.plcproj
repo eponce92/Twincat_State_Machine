@@ -31,6 +31,18 @@
     <Compile Include="POUs\MAIN.TcPOU">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="POUs\PRG_Aborting.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\PRG_Homing.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\PRG_Running.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\PRG_Stopping.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="POUs\VisualizationManager.TcVMO">
       <SubType>Code</SubType>
     </Compile>

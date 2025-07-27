@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.13">
+  <POU Name="PRG_Stopping" Id="{12345678-1234-1234-1234-123456789003}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM PRG_Stopping
+VAR_IN_OUT
+    CurrentStep : ActiveStep;  // Shared step structure with state machine
+END_VAR
+
+VAR_INPUT
+    StepTimerSeconds : DINT;   // Timer value from state machine
+    RetrySignal : BOOL;        // Retry signal from state machine
+END_VAR
+
+VAR_OUTPUT
+    NextStep : DINT;           // Next step to transition to
+END_VAR
+
+VAR
+    // Step function blocks for stopping sequence
+    fbStep2000 : FB_SequenceStep;  // Stop Prepare
+    fbStep2002 : FB_SequenceStep;  // Stop Execute
+    
+    // Step permissives (simulation for testing)
+    step2000Perms : INT := -1;     // All OK for step 2000
+    step2002Perms : INT := -1;     // All OK for step 2002
+    
+    // Internal variables
+    stepActive2000 : BOOL;
+    stepActive2002 : BOOL;
+    
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[//=============================================================================
+// PRG_Stopping - Handles STOPPING state sequence (2000-2999)
+//=============================================================================
+// Step numbering: 2000, 2002 (even numbers)
+// Fault steps: 2001, 2003 (odd numbers, +1 of original)
+
+//=============================================================================
+// SEQUENCE CONTROL LOGIC
+//=============================================================================
+// Initialize sequence when first entering STOPPING state
+IF CurrentStep.Step = 0 THEN
+    NextStep := 2000;  // Start with first stopping step
+END_IF;
+
+//=============================================================================
+// STEP 2000 - STOP PREPARE
+//=============================================================================
+fbStep2000(
+    inpStep := CurrentStep.Step,
+    cfgStep := 2000,
+    cfgNextStep := 2002,
+    inpStepTimerSeconds := StepTimerSeconds,
+    inpRetry := RetrySignal,
+    inpStepPermissives := step2000Perms,
+    cfgStepTimeout := 8,  // 8 second timeout
+    inpFaultStep := FALSE,
+    ActiveStep := CurrentStep
+);
+stepActive2000 := fbStep2000.outStepActive;
+
+// Step 2000 Active Logic
+IF stepActive2000 THEN
+    // Permissives simulation - Simulate based on timer
+    IF StepTimerSeconds < 4 THEN
+        step2000Perms := 16#FFFE;  // Bit 0 not OK (not ready yet)
+    ELSE
+        step2000Perms := -1;  // All permissives OK
+    END_IF;
+    
+    // HMI configuration and actions
+    CurrentStep.PermsHMI.Name := 'Stop Prepare';
+    CurrentStep.PermsHMI.Desc[0] := 'Production Safe to Stop';
+    CurrentStep.PermsHMI.Desc[1] := 'Work in Progress Clear';
+    CurrentStep.PermsHMI.Desc[2] := 'Equipment Ready for Stop';
+    
+    // Add any step-specific actions here
+    // Example: Complete current work cycle, prepare for safe stop, etc.
+    
+    // Step advancement - Only advance if permissives are OK
+    IF step2000Perms = -1 THEN  // All permissives good
+        NextStep := fbStep2000.outNextStep;
+    END_IF;
+END_IF;
+
+//=============================================================================
+// STEP 2002 - STOP EXECUTE
+//=============================================================================
+fbStep2002(
+    inpStep := CurrentStep.Step,
+    cfgStep := 2002,
+    cfgNextStep := 0,  // 0 = sequence complete
+    inpStepTimerSeconds := StepTimerSeconds,
+    inpRetry := RetrySignal,
+    inpStepPermissives := step2002Perms,
+    cfgStepTimeout := 12,  // 12 second timeout
+    inpFaultStep := FALSE,
+    ActiveStep := CurrentStep
+);
+stepActive2002 := fbStep2002.outStepActive;
+
+// Step 2002 Active Logic
+IF stepActive2002 THEN
+    // Permissives simulation - Simulate based on timer
+    IF StepTimerSeconds < 8 THEN
+        step2002Perms := 16#FFFD;  // Bit 1 not OK (stop not complete)
+    ELSE
+        step2002Perms := -1;  // All permissives OK
+    END_IF;
+    
+    // HMI configuration and actions
+    CurrentStep.PermsHMI.Name := 'Stop Execute';
+    CurrentStep.PermsHMI.Desc[0] := 'Motors Stopping';
+    CurrentStep.PermsHMI.Desc[1] := 'Systems Powering Down';
+    CurrentStep.PermsHMI.Desc[2] := 'Safe State Achieved';
+    
+    // Add any step-specific actions here
+    // Example: Stop motors, power down systems, secure valves, etc.
+    
+    // Step advancement - Only advance if permissives are OK (completion step)
+    IF step2002Perms = -1 THEN  // All permissives good
+        NextStep := fbStep2002.outNextStep;  // Should be 0 for completion
+    END_IF;
+END_IF;
+]]></ST>
+    </Implementation>
+    <LineIds Name="PRG_Stopping">
+      <LineId Id="1" Count="90" />
+    </LineIds>
+  </POU>
+</TcPlcObject>
