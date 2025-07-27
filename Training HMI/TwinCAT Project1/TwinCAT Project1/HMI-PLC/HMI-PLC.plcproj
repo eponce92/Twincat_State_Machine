@@ -28,13 +28,7 @@
     <Compile Include="PlcTask.TcTTO">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\FB_CameraControl.TcPOU">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="POUs\MAIN.TcPOU">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="POUs\Running_Sequence.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="POUs\VisualizationManager.TcVMO">

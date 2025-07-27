@@ -3,15 +3,7 @@
   <POU Name="MAIN" Id="{4f4444b9-0fc9-41d2-8d8b-6376a7d4acc5}" SpecialFunc="None">
     <Declaration><![CDATA[PROGRAM MAIN
 VAR
-    // Function block instance
-    fbActuator1 : FB_Permissives;
-    
-    // For demonstration: local boolean for final check
-    bActuator1OK : BOOL;
-	
-    // Step stuff
-    step_test : FB_SequenceStep;
-    active_step_test: ActiveStep;
+    	
     
     // State Machine instance
     fbStateMachine : FB_StateMachine;
@@ -34,10 +26,7 @@ VAR
 
 END_VAR]]></Declaration>
     <Implementation>
-      <ST><![CDATA[// Call existing blocks
-step_test(ActiveStep := active_step_test);
-fbActuator1();
-
+      <ST><![CDATA[
 // Call state  
 fbStateMachine(
     EnableIn := TRUE,              // Enable the state machine
@@ -54,7 +43,7 @@ fbStateMachine(
 ]]></ST>
     </Implementation>
     <LineIds Name="MAIN">
-      <LineId Id="762" Count="16" />
+      <LineId Id="765" Count="13" />
       <LineId Id="223" Count="0" />
     </LineIds>
   </POU>
