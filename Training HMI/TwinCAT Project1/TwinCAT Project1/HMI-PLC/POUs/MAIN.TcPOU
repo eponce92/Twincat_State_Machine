@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.13">
+  <POU Name="MAIN" Id="{4f4444b9-0fc9-41d2-8d8b-6376a7d4acc5}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM MAIN
+VAR
+    // Function block instance
+    fbActuator1 : FB_Permissives;
+    
+    // For demonstration: local boolean for final check
+    bActuator1OK : BOOL;
+	
+    // Step stuff
+    step_test : FB_SequenceStep;
+    active_step_test: ActiveStep;
+    
+    // State Machine instance
+    fbStateMachine : FB_StateMachine;
+    
+    // HMI interface for state machine
+    stateMachineHMI : SM_HMI;
+    
+    // Current step for state machine
+    currentStep : ActiveStep;
+    
+    // State machine command inputs
+    smCommands : ST_SM_Commands;
+      
+    // Test inputs
+    testAutoIntlk : INT := -1;  // All OK by default
+    testHomePerm : INT := -1;   // All OK by default
+    testStartPerm : INT := -1;  // All OK by default
+    testProceedPerm : INT := -1; // All OK by default
+    
+
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[// Call existing blocks
+step_test(ActiveStep := active_step_test);
+fbActuator1();
+
+// Call state  
+fbStateMachine(
+    EnableIn := TRUE,              // Enable the state machine
+    cfgAutoRun := FALSE,           // Auto run configuration
+    inpAutoIntlk := testAutoIntlk, // Auto interlocks
+    inpHomePerm := testHomePerm,   // Home permissions
+    inpStartPerm := testStartPerm, // Start permissions
+    inpProceedPerm := testProceedPerm, // Proceed permissions
+    Commands := smCommands,        // Command inputs
+    HMI := stateMachineHMI,        // HMI interface
+    CurrentStep := currentStep     // Current step
+);
+
+]]></ST>
+    </Implementation>
+    <LineIds Name="MAIN">
+      <LineId Id="762" Count="16" />
+      <LineId Id="223" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

@@ -1,0 +1,152 @@
+<?xml version="1.0"?>
+<VarLinks>
+	<OwnerA Name="TINC^NC-Task 1 SAF^Axes^Axis 1">
+		<OwnerB Name="TIID^Device 2 (EtherCAT)^Term 2 (EK1100)^Term 7 (EL7047)">
+			<Link VarA="Drive^Inputs^In^nState1" VarB="STM Status^Status^Error" Size="1" OffsA="3"/>
+			<Link VarA="Drive^Inputs^In^nState1" VarB="STM Status^Status^Motor stall" Size="1" OffsA="7"/>
+			<Link VarA="Drive^Inputs^In^nState1" VarB="STM Status^Status^Moving negative" Size="1" OffsA="5"/>
+			<Link VarA="Drive^Inputs^In^nState1" VarB="STM Status^Status^Moving positive" Size="1" OffsA="4"/>
+			<Link VarA="Drive^Inputs^In^nState1" VarB="STM Status^Status^Ready" Size="1" OffsA="1"/>
+			<Link VarA="Drive^Inputs^In^nState1" VarB="STM Status^Status^Ready to enable"/>
+			<Link VarA="Drive^Inputs^In^nState1" VarB="STM Status^Status^Torque reduced" Size="1" OffsA="6"/>
+			<Link VarA="Drive^Inputs^In^nState1" VarB="STM Status^Status^Warning" Size="1" OffsA="2"/>
+			<Link VarA="Drive^Inputs^In^nState2" VarB="STM Status^Status^Digital input 1" Size="1" OffsA="3"/>
+			<Link VarA="Drive^Inputs^In^nState2" VarB="STM Status^Status^Digital input 2" Size="1" OffsA="4"/>
+			<Link VarA="Drive^Inputs^In^nState2" VarB="STM Status^Status^Sync error" Size="1" OffsA="5"/>
+			<Link VarA="Drive^Inputs^In^nState2" VarB="STM Status^Status^TxPDO Toggle" Size="1" OffsA="7"/>
+			<Link VarA="Drive^Inputs^In^nState4" VarB="WcState^InputToggle" Size="1" OffsA="1"/>
+			<Link VarA="Drive^Inputs^In^nState4" VarB="WcState^WcState"/>
+			<Link VarA="Drive^Outputs^Out^nCtrl1" VarB="STM Control^Control^Enable"/>
+			<Link VarA="Drive^Outputs^Out^nCtrl1" VarB="STM Control^Control^Reduce torque" Size="1" OffsA="2"/>
+			<Link VarA="Drive^Outputs^Out^nCtrl1" VarB="STM Control^Control^Reset" Size="1" OffsA="1"/>
+			<Link VarA="Drive^Outputs^Out^nCtrl2" VarB="STM Control^Control^Digital output 1" Size="1" OffsA="3"/>
+			<Link VarA="Drive^Outputs^Out^nDataOut2[0]" VarB="STM Velocity^Velocity"/>
+			<Link VarA="Enc^Inputs^In^nDataIn1[0]" VarB="ENC Status compact^Counter value"/>
+			<Link VarA="Enc^Inputs^In^nDataIn2[0]" VarB="ENC Status compact^Latch value"/>
+			<Link VarA="Enc^Inputs^In^nState1" VarB="ENC Status compact^Status^Counter overflow" Size="1" OffsA="4"/>
+			<Link VarA="Enc^Inputs^In^nState1" VarB="ENC Status compact^Status^Counter underflow" Size="1" OffsA="3"/>
+			<Link VarA="Enc^Inputs^In^nState1" VarB="ENC Status compact^Status^Extrapolation stall" Size="1" OffsA="7"/>
+			<Link VarA="Enc^Inputs^In^nState1" VarB="ENC Status compact^Status^Latch C valid"/>
+			<Link VarA="Enc^Inputs^In^nState1" VarB="ENC Status compact^Status^Latch extern valid" Size="1" OffsA="1"/>
+			<Link VarA="Enc^Inputs^In^nState1" VarB="ENC Status compact^Status^Set counter done" Size="1" OffsA="2"/>
+			<Link VarA="Enc^Inputs^In^nState2" VarB="ENC Status compact^Status^Status of extern latch" Size="1" OffsA="4"/>
+			<Link VarA="Enc^Inputs^In^nState2" VarB="ENC Status compact^Status^Status of input A"/>
+			<Link VarA="Enc^Inputs^In^nState2" VarB="ENC Status compact^Status^Status of input B" Size="1" OffsA="1"/>
+			<Link VarA="Enc^Inputs^In^nState2" VarB="ENC Status compact^Status^Status of input C" Size="1" OffsA="2"/>
+			<Link VarA="Enc^Inputs^In^nState2" VarB="ENC Status compact^Status^Sync error" Size="1" OffsA="5"/>
+			<Link VarA="Enc^Inputs^In^nState2" VarB="ENC Status compact^Status^TxPDO Toggle" Size="1" OffsA="7"/>
+			<Link VarA="Enc^Inputs^In^nState4" VarB="WcState^InputToggle" Size="1" OffsA="1"/>
+			<Link VarA="Enc^Inputs^In^nState4" VarB="WcState^WcState"/>
+			<Link VarA="Enc^Outputs^Out^nCtrl1" VarB="ENC Control compact^Control^Enable latch C"/>
+			<Link VarA="Enc^Outputs^Out^nCtrl1" VarB="ENC Control compact^Control^Enable latch extern on negative edge" Size="1" OffsA="3"/>
+			<Link VarA="Enc^Outputs^Out^nCtrl1" VarB="ENC Control compact^Control^Enable latch extern on positive edge" Size="1" OffsA="1"/>
+			<Link VarA="Enc^Outputs^Out^nCtrl1" VarB="ENC Control compact^Control^Set counter" Size="1" OffsA="2"/>
+			<Link VarA="Enc^Outputs^Out^nDataOut1[0]" VarB="ENC Control compact^Set counter value"/>
+		</OwnerB>
+	</OwnerA>
+	<OwnerA Name="TINC^NC-Task 1 SAF^Axes^Axis 2">
+		<OwnerB Name="TIID^Device 2 (EtherCAT)^Term 2 (EK1100)^Term 8 (EL7047)">
+			<Link VarA="Drive^Inputs^In^nState1" VarB="STM Status^Status^Error" Size="1" OffsA="3"/>
+			<Link VarA="Drive^Inputs^In^nState1" VarB="STM Status^Status^Motor stall" Size="1" OffsA="7"/>
+			<Link VarA="Drive^Inputs^In^nState1" VarB="STM Status^Status^Moving negative" Size="1" OffsA="5"/>
+			<Link VarA="Drive^Inputs^In^nState1" VarB="STM Status^Status^Moving positive" Size="1" OffsA="4"/>
+			<Link VarA="Drive^Inputs^In^nState1" VarB="STM Status^Status^Ready" Size="1" OffsA="1"/>
+			<Link VarA="Drive^Inputs^In^nState1" VarB="STM Status^Status^Ready to enable"/>
+			<Link VarA="Drive^Inputs^In^nState1" VarB="STM Status^Status^Torque reduced" Size="1" OffsA="6"/>
+			<Link VarA="Drive^Inputs^In^nState1" VarB="STM Status^Status^Warning" Size="1" OffsA="2"/>
+			<Link VarA="Drive^Inputs^In^nState2" VarB="STM Status^Status^Digital input 1" Size="1" OffsA="3"/>
+			<Link VarA="Drive^Inputs^In^nState2" VarB="STM Status^Status^Digital input 2" Size="1" OffsA="4"/>
+			<Link VarA="Drive^Inputs^In^nState2" VarB="STM Status^Status^Sync error" Size="1" OffsA="5"/>
+			<Link VarA="Drive^Inputs^In^nState2" VarB="STM Status^Status^TxPDO Toggle" Size="1" OffsA="7"/>
+			<Link VarA="Drive^Inputs^In^nState4" VarB="WcState^InputToggle" Size="1" OffsA="1"/>
+			<Link VarA="Drive^Inputs^In^nState4" VarB="WcState^WcState"/>
+			<Link VarA="Drive^Outputs^Out^nCtrl1" VarB="STM Control^Control^Enable"/>
+			<Link VarA="Drive^Outputs^Out^nCtrl1" VarB="STM Control^Control^Reduce torque" Size="1" OffsA="2"/>
+			<Link VarA="Drive^Outputs^Out^nCtrl1" VarB="STM Control^Control^Reset" Size="1" OffsA="1"/>
+			<Link VarA="Drive^Outputs^Out^nCtrl2" VarB="STM Control^Control^Digital output 1" Size="1" OffsA="3"/>
+			<Link VarA="Drive^Outputs^Out^nDataOut2[0]" VarB="STM Velocity^Velocity"/>
+			<Link VarA="Enc^Inputs^In^nDataIn1[0]" VarB="ENC Status compact^Counter value"/>
+			<Link VarA="Enc^Inputs^In^nDataIn2[0]" VarB="ENC Status compact^Latch value"/>
+			<Link VarA="Enc^Inputs^In^nState1" VarB="ENC Status compact^Status^Counter overflow" Size="1" OffsA="4"/>
+			<Link VarA="Enc^Inputs^In^nState1" VarB="ENC Status compact^Status^Counter underflow" Size="1" OffsA="3"/>
+			<Link VarA="Enc^Inputs^In^nState1" VarB="ENC Status compact^Status^Extrapolation stall" Size="1" OffsA="7"/>
+			<Link VarA="Enc^Inputs^In^nState1" VarB="ENC Status compact^Status^Latch C valid"/>
+			<Link VarA="Enc^Inputs^In^nState1" VarB="ENC Status compact^Status^Latch extern valid" Size="1" OffsA="1"/>
+			<Link VarA="Enc^Inputs^In^nState1" VarB="ENC Status compact^Status^Set counter done" Size="1" OffsA="2"/>
+			<Link VarA="Enc^Inputs^In^nState2" VarB="ENC Status compact^Status^Status of extern latch" Size="1" OffsA="4"/>
+			<Link VarA="Enc^Inputs^In^nState2" VarB="ENC Status compact^Status^Status of input A"/>
+			<Link VarA="Enc^Inputs^In^nState2" VarB="ENC Status compact^Status^Status of input B" Size="1" OffsA="1"/>
+			<Link VarA="Enc^Inputs^In^nState2" VarB="ENC Status compact^Status^Status of input C" Size="1" OffsA="2"/>
+			<Link VarA="Enc^Inputs^In^nState2" VarB="ENC Status compact^Status^Sync error" Size="1" OffsA="5"/>
+			<Link VarA="Enc^Inputs^In^nState2" VarB="ENC Status compact^Status^TxPDO Toggle" Size="1" OffsA="7"/>
+			<Link VarA="Enc^Inputs^In^nState4" VarB="WcState^InputToggle" Size="1" OffsA="1"/>
+			<Link VarA="Enc^Inputs^In^nState4" VarB="WcState^WcState"/>
+			<Link VarA="Enc^Outputs^Out^nCtrl1" VarB="ENC Control compact^Control^Enable latch C"/>
+			<Link VarA="Enc^Outputs^Out^nCtrl1" VarB="ENC Control compact^Control^Enable latch extern on negative edge" Size="1" OffsA="3"/>
+			<Link VarA="Enc^Outputs^Out^nCtrl1" VarB="ENC Control compact^Control^Enable latch extern on positive edge" Size="1" OffsA="1"/>
+			<Link VarA="Enc^Outputs^Out^nCtrl1" VarB="ENC Control compact^Control^Set counter" Size="1" OffsA="2"/>
+			<Link VarA="Enc^Outputs^Out^nDataOut1[0]" VarB="ENC Control compact^Set counter value"/>
+		</OwnerB>
+	</OwnerA>
+	<OwnerA Name="TIPC^HMI-PLC^HMI-PLC Instance">
+		<OwnerB Name="TIID^Device 1 (TC3 EIP Scanner)^Box 1 (In-Sight 7000 Series)">
+			<Link VarA="PlcTask Inputs^IO_Mapping.inpAcquiring" VarB="Connection 1 (Input/Output)^Inputs^Acquiring"/>
+			<Link VarA="PlcTask Inputs^IO_Mapping.inpAcquisitionID" VarB="Connection 1 (Input/Output)^Inputs^Acquisition ID"/>
+			<Link VarA="PlcTask Inputs^IO_Mapping.inpCommandComplete" VarB="Connection 1 (Input/Output)^Inputs^Command Complete"/>
+			<Link VarA="PlcTask Inputs^IO_Mapping.inpCommandExecuting" VarB="Connection 1 (Input/Output)^Inputs^Command Executing"/>
+			<Link VarA="PlcTask Inputs^IO_Mapping.inpCommandFailed" VarB="Connection 1 (Input/Output)^Inputs^Command Failed"/>
+			<Link VarA="PlcTask Inputs^IO_Mapping.inpCurrentJobID" VarB="Connection 1 (Input/Output)^Inputs^Current Job ID"/>
+			<Link VarA="PlcTask Inputs^IO_Mapping.inpExposureComplete" VarB="Connection 1 (Input/Output)^Inputs^Exposure Complete"/>
+			<Link VarA="PlcTask Inputs^IO_Mapping.inpInspecting" VarB="Connection 1 (Input/Output)^Inputs^Inspecting"/>
+			<Link VarA="PlcTask Inputs^IO_Mapping.inpInspectionComplete" VarB="Connection 1 (Input/Output)^Inputs^Inspection Complete"/>
+			<Link VarA="PlcTask Inputs^IO_Mapping.inpInspectionID" VarB="Connection 1 (Input/Output)^Inputs^Inspection ID"/>
+			<Link VarA="PlcTask Inputs^IO_Mapping.inpInspectionResultCode" VarB="Connection 1 (Input/Output)^Inputs^Inspection Result Code"/>
+			<Link VarA="PlcTask Inputs^IO_Mapping.inpInspectionResults" VarB="Connection 1 (Input/Output)^Inputs^Inspection Results"/>
+			<Link VarA="PlcTask Inputs^IO_Mapping.inpInspectionResults1" VarB="Connection 1 (Input/Output)^Inputs^Inspection Results_1"/>
+			<Link VarA="PlcTask Inputs^IO_Mapping.inpInspectionResults10" VarB="Connection 1 (Input/Output)^Inputs^Inspection Results_10"/>
+			<Link VarA="PlcTask Inputs^IO_Mapping.inpInspectionResults2" VarB="Connection 1 (Input/Output)^Inputs^Inspection Results_2"/>
+			<Link VarA="PlcTask Inputs^IO_Mapping.inpInspectionResults3" VarB="Connection 1 (Input/Output)^Inputs^Inspection Results_3"/>
+			<Link VarA="PlcTask Inputs^IO_Mapping.inpInspectionResults4" VarB="Connection 1 (Input/Output)^Inputs^Inspection Results_4"/>
+			<Link VarA="PlcTask Inputs^IO_Mapping.inpInspectionResults5" VarB="Connection 1 (Input/Output)^Inputs^Inspection Results_5"/>
+			<Link VarA="PlcTask Inputs^IO_Mapping.inpInspectionResults6" VarB="Connection 1 (Input/Output)^Inputs^Inspection Results_6"/>
+			<Link VarA="PlcTask Inputs^IO_Mapping.inpInspectionResults7" VarB="Connection 1 (Input/Output)^Inputs^Inspection Results_7"/>
+			<Link VarA="PlcTask Inputs^IO_Mapping.inpInspectionResults8" VarB="Connection 1 (Input/Output)^Inputs^Inspection Results_8"/>
+			<Link VarA="PlcTask Inputs^IO_Mapping.inpInspectionResults9" VarB="Connection 1 (Input/Output)^Inputs^Inspection Results_9"/>
+			<Link VarA="PlcTask Inputs^IO_Mapping.inpJobPass" VarB="Connection 1 (Input/Output)^Inputs^Job Pass"/>
+			<Link VarA="PlcTask Inputs^IO_Mapping.inpMissedAcq" VarB="Connection 1 (Input/Output)^Inputs^Missed Acq"/>
+			<Link VarA="PlcTask Inputs^IO_Mapping.inpOfflineReason" VarB="Connection 1 (Input/Output)^Inputs^Offline Reason"/>
+			<Link VarA="PlcTask Inputs^IO_Mapping.inpOnline" VarB="Connection 1 (Input/Output)^Inputs^Online"/>
+			<Link VarA="PlcTask Inputs^IO_Mapping.inpResultsBufferOverrun" VarB="Connection 1 (Input/Output)^Inputs^Results Buffer Overrun"/>
+			<Link VarA="PlcTask Inputs^IO_Mapping.inpResultsValid" VarB="Connection 1 (Input/Output)^Inputs^Results Valid"/>
+			<Link VarA="PlcTask Inputs^IO_Mapping.inpTestRunReady" VarB="Connection 1 (Input/Output)^Inputs^Test Run Ready"/>
+			<Link VarA="PlcTask Inputs^IO_Mapping.inpTriggerAck" VarB="Connection 1 (Input/Output)^Inputs^Trigger Ack"/>
+			<Link VarA="PlcTask Inputs^IO_Mapping.inpTriggerReady" VarB="Connection 1 (Input/Output)^Inputs^Trigger Ready"/>
+			<Link VarA="PlcTask Outputs^IO_Mapping.outBufferResultsEnable" VarB="Connection 1 (Input/Output)^Outputs^Buffer Results Enable"/>
+			<Link VarA="PlcTask Outputs^IO_Mapping.outCommand" VarB="Connection 1 (Input/Output)^Outputs^Command"/>
+			<Link VarA="PlcTask Outputs^IO_Mapping.outExecuteCommand" VarB="Connection 1 (Input/Output)^Outputs^Execute Command"/>
+			<Link VarA="PlcTask Outputs^IO_Mapping.outInspectionResultsAck" VarB="Connection 1 (Input/Output)^Outputs^Inspection Results Ack"/>
+			<Link VarA="PlcTask Outputs^IO_Mapping.outSetOffline" VarB="Connection 1 (Input/Output)^Outputs^Set Offline"/>
+			<Link VarA="PlcTask Outputs^IO_Mapping.outSoftEvent0" VarB="Connection 1 (Input/Output)^Outputs^Soft Event 0"/>
+			<Link VarA="PlcTask Outputs^IO_Mapping.outSoftEvent1" VarB="Connection 1 (Input/Output)^Outputs^Soft Event 1"/>
+			<Link VarA="PlcTask Outputs^IO_Mapping.outSoftEvent2" VarB="Connection 1 (Input/Output)^Outputs^Soft Event 2"/>
+			<Link VarA="PlcTask Outputs^IO_Mapping.outSoftEvent3" VarB="Connection 1 (Input/Output)^Outputs^Soft Event 3"/>
+			<Link VarA="PlcTask Outputs^IO_Mapping.outSoftEvent4" VarB="Connection 1 (Input/Output)^Outputs^Soft Event 4"/>
+			<Link VarA="PlcTask Outputs^IO_Mapping.outSoftEvent5" VarB="Connection 1 (Input/Output)^Outputs^Soft Event 5"/>
+			<Link VarA="PlcTask Outputs^IO_Mapping.outSoftEvent6" VarB="Connection 1 (Input/Output)^Outputs^Soft Event 6"/>
+			<Link VarA="PlcTask Outputs^IO_Mapping.outSoftEvent7" VarB="Connection 1 (Input/Output)^Outputs^Soft Event 7"/>
+			<Link VarA="PlcTask Outputs^IO_Mapping.outTriggerCamera" VarB="Connection 1 (Input/Output)^Outputs^Trigger"/>
+			<Link VarA="PlcTask Outputs^IO_Mapping.outTriggerEnable" VarB="Connection 1 (Input/Output)^Outputs^Trigger Enable"/>
+			<Link VarA="PlcTask Outputs^IO_Mapping.outUserData" VarB="Connection 1 (Input/Output)^Outputs^User Data"/>
+			<Link VarA="PlcTask Outputs^IO_Mapping.outUserData1" VarB="Connection 1 (Input/Output)^Outputs^User Data_1"/>
+			<Link VarA="PlcTask Outputs^IO_Mapping.outUserData10" VarB="Connection 1 (Input/Output)^Outputs^User Data_10"/>
+			<Link VarA="PlcTask Outputs^IO_Mapping.outUserData2" VarB="Connection 1 (Input/Output)^Outputs^User Data_2"/>
+			<Link VarA="PlcTask Outputs^IO_Mapping.outUserData3" VarB="Connection 1 (Input/Output)^Outputs^User Data_3"/>
+			<Link VarA="PlcTask Outputs^IO_Mapping.outUserData4" VarB="Connection 1 (Input/Output)^Outputs^User Data_4"/>
+			<Link VarA="PlcTask Outputs^IO_Mapping.outUserData5" VarB="Connection 1 (Input/Output)^Outputs^User Data_5"/>
+			<Link VarA="PlcTask Outputs^IO_Mapping.outUserData6" VarB="Connection 1 (Input/Output)^Outputs^User Data_6"/>
+			<Link VarA="PlcTask Outputs^IO_Mapping.outUserData7" VarB="Connection 1 (Input/Output)^Outputs^User Data_7"/>
+			<Link VarA="PlcTask Outputs^IO_Mapping.outUserData8" VarB="Connection 1 (Input/Output)^Outputs^User Data_8"/>
+			<Link VarA="PlcTask Outputs^IO_Mapping.outUserData9" VarB="Connection 1 (Input/Output)^Outputs^User Data_9"/>
+		</OwnerB>
+	</OwnerA>
+</VarLinks>
