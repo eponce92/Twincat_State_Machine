@@ -98,37 +98,7 @@ fbStateMachine(
     CurrentStep := currentStep     // Current step (shared with sequences)
 );
 
-// Auto-clear commands after processing (since Commands is input-only to state machine)
-// The state machine processes the commands on the rising edge, so we can clear them immediately
-IF smCommands.Start THEN
-    smCommands.Start := FALSE;
-END_IF;
 
-IF smCommands.Stop THEN
-    smCommands.Stop := FALSE;
-END_IF;
-
-IF smCommands.Home THEN
-    smCommands.Home := FALSE;
-END_IF;
-
-IF smCommands.Abort THEN
-    smCommands.Abort := FALSE;
-END_IF;
-
-IF smCommands.Pause THEN
-    smCommands.Pause := FALSE;
-END_IF;
-
-IF smCommands.Proceed THEN
-    smCommands.Proceed := FALSE;
-END_IF;
-
-IF smCommands.Retry THEN
-    smCommands.Retry := FALSE;
-END_IF;
-
-// Note: CompleteState is managed internally by the sequence logic above
 
 ]]></ST>
     </Implementation>
@@ -137,6 +107,9 @@ END_IF;
       <LineId Id="223" Count="0" />
       <LineId Id="18" Count="52" />
       <LineId Id="2" Count="0" />
+      <LineId Id="72" Count="2" />
+      <LineId Id="105" Count="1" />
+      <LineId Id="779" Count="0" />
     </LineIds>
   </POU>
 </TcPlcObject>
