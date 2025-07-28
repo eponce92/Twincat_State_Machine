@@ -567,22 +567,31 @@ IF EnableIn THEN
     // Step and timer management
     //-------------------------------------------------------------------------
     
-    // Update step when NextStep changes
-    IF StepInfo.CurrentStep <> NextStep THEN
-        StepInfo.CurrentStep := NextStep;
-        TimerReset := TRUE;
-    END_IF;
-    
-    // Clear ActiveStep when transitioning to step 0
+    // Clear ActiveStep when transitioning to step 0 (when step becomes zero)
     stepIsZero := (StepInfo.CurrentStep = 0);
     R_TRIG_1(CLK := stepIsZero);
     IF R_TRIG_1.Q THEN
         CurrentStep := internalClearStep;
     END_IF;
     
+    // Update step when NextStep changes - AFTER clearing logic
+    IF StepInfo.CurrentStep <> NextStep THEN
+        StepInfo.CurrentStep := NextStep;
+        TimerReset := TRUE;
+    END_IF;
+    
+    // Synchronize shared CurrentStep.Step with internal step tracking - AFTER all step updates
+    IF CurrentStep.Step <> StepInfo.CurrentStep THEN
+        CurrentStep.Step := StepInfo.CurrentStep;
+    END_IF;
+    
     // Step timer logic
     IF NOT Status.Paused OR (Status.Paused AND CommandsRequested.CompleteState) THEN
-        IF NOT TimerReset THEN
+        IF TimerReset THEN
+            // Reset the timer by setting IN to FALSE for one scan
+            StepTimer(IN := FALSE);
+        ELSE
+            // Normal timer operation
             StepTimer.PT := T#99H;
             StepTimer(IN := TRUE);
         END_IF;
@@ -593,7 +602,7 @@ IF EnableIn THEN
     // Convert timer value to seconds
     StepInfo.StepTimerSeconds := UDINT_TO_REAL(TIME_TO_UDINT(StepTimer.ET)) / 1000.0;
     
-    // Reset timer flag when step matches NextStep
+    // Reset timer flag when step matches NextStep (after timer has been reset)
     IF TimerReset AND StepInfo.CurrentStep = NextStep THEN
         TimerReset := FALSE;
     END_IF;

@@ -9,6 +9,7 @@ END_VAR
 VAR_INPUT
     StepTimerSeconds : DINT;   // Timer value from state machine
     RetrySignal : BOOL;        // Retry signal from state machine
+    StateMachineStatus : ST_SM_Status;  // Complete state machine status
 END_VAR
 
 VAR_OUTPUT
@@ -24,10 +25,6 @@ VAR
     step3000Perms : INT := -1;     // All OK for step 3000
     step3002Perms : INT := -1;     // All OK for step 3002
     
-    // Internal variables
-    stepActive3000 : BOOL;
-    stepActive3002 : BOOL;
-    
 END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[//=============================================================================
@@ -40,8 +37,11 @@ END_VAR]]></Declaration>
 // SEQUENCE CONTROL LOGIC
 //=============================================================================
 // Initialize sequence when first entering RUNNING state
-IF CurrentStep.Step = 0 THEN
+IF StateMachineStatus.Running AND CurrentStep.Step = 0 THEN
     NextStep := 3000;  // Start with first running step
+ELSE
+    // Default to current step - will be overridden by active step logic below
+    NextStep := CurrentStep.Step;
 END_IF;
 
 //=============================================================================
@@ -58,10 +58,9 @@ fbStep3000(
     inpFaultStep := FALSE,
     ActiveStep := CurrentStep
 );
-stepActive3000 := fbStep3000.outStepActive;
 
 // Step 3000 Active Logic
-IF stepActive3000 THEN
+IF fbStep3000.outStepActive THEN
     // Permissives simulation - Simulate based on timer
     IF StepTimerSeconds < 5 THEN
         step3000Perms := 16#FFFE;  // Bit 0 not OK (not ready yet)
@@ -78,10 +77,8 @@ IF stepActive3000 THEN
     // Add any step-specific actions here
     // Example: Start production line, initialize process parameters, etc.
     
-    // Step advancement - Only advance if permissives are OK
-    IF step3000Perms = -1 THEN  // All permissives good
-        NextStep := fbStep3000.outNextStep;
-    END_IF;
+    // FB_SequenceStep determines next step automatically based on permissives
+    NextStep := fbStep3000.outNextStep;
 END_IF;
 
 //=============================================================================
@@ -98,10 +95,9 @@ fbStep3002(
     inpFaultStep := FALSE,
     ActiveStep := CurrentStep
 );
-stepActive3002 := fbStep3002.outStepActive;
 
 // Step 3002 Active Logic
-IF stepActive3002 THEN
+IF fbStep3002.outStepActive THEN
     // Permissives simulation - Simulate based on timer
     IF StepTimerSeconds < 15 THEN
         step3002Perms := 16#FFFD;  // Bit 1 not OK (production not complete)
@@ -118,10 +114,8 @@ IF stepActive3002 THEN
     // Add any step-specific actions here
     // Example: Monitor production process, quality checks, output control, etc.
     
-    // Step advancement - Only advance if permissives are OK (completion step)
-    IF step3002Perms = -1 THEN  // All permissives good
-        NextStep := fbStep3002.outNextStep;  // Should be 0 for completion
-    END_IF;
+    // FB_SequenceStep determines next step automatically based on permissives
+    NextStep := fbStep3002.outNextStep;
 END_IF;
 ]]></ST>
     </Implementation>

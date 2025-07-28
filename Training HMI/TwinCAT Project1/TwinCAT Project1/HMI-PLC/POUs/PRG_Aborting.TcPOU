@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.13">
   <POU Name="PRG_Aborting" Id="{12345678-1234-1234-1234-123456789004}" SpecialFunc="None">
     <Declaration><![CDATA[PROGRAM PRG_Aborting
@@ -9,6 +9,7 @@ END_VAR
 VAR_INPUT
     StepTimerSeconds : DINT;   // Timer value from state machine
     RetrySignal : BOOL;        // Retry signal from state machine
+    StateMachineStatus : ST_SM_Status;  // Complete state machine status
 END_VAR
 
 VAR_OUTPUT
@@ -24,10 +25,6 @@ VAR
     step5000Perms : INT := -1;     // All OK for step 5000
     step5002Perms : INT := -1;     // All OK for step 5002
     
-    // Internal variables
-    stepActive5000 : BOOL;
-    stepActive5002 : BOOL;
-    
 END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[//=============================================================================
@@ -40,8 +37,11 @@ END_VAR]]></Declaration>
 // SEQUENCE CONTROL LOGIC
 //=============================================================================
 // Initialize sequence when first entering ABORTING state
-IF CurrentStep.Step = 0 THEN
+IF StateMachineStatus.Aborting AND CurrentStep.Step = 0 THEN
     NextStep := 5000;  // Start with first aborting step
+ELSE
+    // Default to current step - will be overridden by active step logic below
+    NextStep := CurrentStep.Step;
 END_IF;
 
 //=============================================================================
@@ -58,10 +58,9 @@ fbStep5000(
     inpFaultStep := FALSE,
     ActiveStep := CurrentStep
 );
-stepActive5000 := fbStep5000.outStepActive;
 
 // Step 5000 Active Logic
-IF stepActive5000 THEN
+IF fbStep5000.outStepActive THEN
     // Permissives simulation - Simulate based on timer
     IF StepTimerSeconds < 2 THEN
         step5000Perms := 16#FFFE;  // Bit 0 not OK (not ready yet)
@@ -78,10 +77,8 @@ IF stepActive5000 THEN
     // Add any step-specific actions here
     // Example: Set emergency stop relays, activate warning lights, etc.
     
-    // Step advancement - Only advance if permissives are OK
-    IF step5000Perms = -1 THEN  // All permissives good
-        NextStep := fbStep5000.outNextStep;
-    END_IF;
+    // FB_SequenceStep determines next step automatically based on permissives
+    NextStep := fbStep5000.outNextStep;
 END_IF;
 
 //=============================================================================
@@ -98,10 +95,9 @@ fbStep5002(
     inpFaultStep := FALSE,
     ActiveStep := CurrentStep
 );
-stepActive5002 := fbStep5002.outStepActive;
 
 // Step 5002 Active Logic
-IF stepActive5002 THEN
+IF fbStep5002.outStepActive THEN
     // Permissives simulation - Simulate based on timer
     IF StepTimerSeconds < 6 THEN
         step5002Perms := 16#FFFD;  // Bit 1 not OK (abort not complete)
@@ -118,15 +114,14 @@ IF stepActive5002 THEN
     // Add any step-specific actions here
     // Example: Execute shutdown sequence, secure valves, stop motors, etc.
     
-    // Step advancement - Only advance if permissives are OK (completion step)
-    IF step5002Perms = -1 THEN  // All permissives good
-        NextStep := fbStep5002.outNextStep;  // Should be 0 for completion
-    END_IF;
+    // FB_SequenceStep determines next step automatically based on permissives
+    NextStep := fbStep5002.outNextStep;
 END_IF;
 ]]></ST>
     </Implementation>
     <LineIds Name="PRG_Aborting">
       <LineId Id="1" Count="70" />
+      <LineId Id="74" Count="19" />
     </LineIds>
   </POU>
 </TcPlcObject>
