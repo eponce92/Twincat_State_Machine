@@ -29,11 +29,6 @@ This repository serves as both a development workspace and reference implementat
 - **Training Materials**: Showing practical implementation patterns
 - **Project Templates**: Providing starting points for new automation projects
 
-## Technology Stack
-
-- **TwinCAT 3**: Beckhoff automation software platform
-- **Structured Text (ST)**: Primary programming language
-- **Function Block Programming**: Modular, reusable automation components
 
 ## Development Status
 
