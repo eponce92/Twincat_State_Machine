@@ -1,4 +1,4 @@
-# TwinCAT Projects
+# Twincat State Machine
 
 A collection of TwinCAT 3 automation projects focused on industrial process control and sequential operations.
 
