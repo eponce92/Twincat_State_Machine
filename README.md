@@ -1,45 +1,47 @@
-# Twincat State Machine
+# TwinCAT State Machine Library
 
-A collection of TwinCAT 3 automation projects focused on industrial process control and sequential operations.
+A structured approach to implementing industrial automation sequences in TwinCAT PLC using state-based control with integrated safety permissions and HMI interface.
 
-## Repository Structure
+## What It Is
 
-### Personal-Libraries
-Contains custom TwinCAT libraries for industrial automation:
+This library provides a framework for building robust automation sequences that follow a clear state machine pattern. Instead of writing complex ladder logic or unstructured code, you define your machine's behavior through distinct states (Homing, Running, Stopping, etc.) and individual steps within each state.
 
-- **State Machine Library**: A comprehensive framework for managing sequential automation processes
-  - State management with multiple operational states (Running, Stopping, Homing, etc.)
-  - Step-by-step sequence control with timeout and fault handling
-  - Permissive systems for safety interlocks and bypass functionality
-  - HMI integration structures for operator interfaces
+The system handles common industrial automation needs like safety interlocks, operator permissions, fault recovery, and step-by-step sequence execution with timeouts.
 
-### Training HMI
-Practical implementation examples showing how to use the custom libraries:
+## How It Works
 
-- **PLC Project**: Demonstrates real-world usage of the state machine library
-  - Main program orchestrating state machine operations
-  - Sequence programs for different operational states
-  - Integration of library function blocks in working applications
+The library centers around three main concepts:
 
-## Purpose
+**State Machine Controller** (`FB_StateMachine`) - Manages overall machine states and transitions. It knows when your machine should be homing, running, stopping, or handling faults, and ensures proper state transitions based on commands and conditions.
 
-This repository serves as both a development workspace and reference implementation for:
+**Sequence Steps** (`FB_SequenceStep`) - Each state contains a series of numbered steps that execute in order. Each step can have its own timeout, safety permissions, and fault handling. Steps use even numbers (1000, 1002) for normal execution and odd numbers (1001, 1003) for fault conditions.
 
-- **Library Development**: Creating reusable automation components
-- **Training Materials**: Showing practical implementation patterns
-- **Project Templates**: Providing starting points for new automation projects
+**Permission System** (`FB_Permissives`) - Validates safety conditions and interlocks before allowing operations. Supports bypass functionality for maintenance and troubleshooting while maintaining safety integrity.
 
+## Implementation Example
 
-## Development Status
+The included code example demonstrates a typical implementation with four main states:
 
-Both the library and implementation projects are actively under development. The focus is on creating robust, reusable components for industrial automation while maintaining flexibility for various application requirements.
+- **Homing** (steps 1000-1999) - Machine initialization and reference positioning
+- **Running** (steps 2000-2999) - Normal production operation
+- **Stopping** (steps 3000-3999) - Controlled shutdown sequence  
+- **Aborting** (steps 4000-4999) - Emergency stop and safe state
+
+Each state has its own program (PRG_Homing, PRG_Running, etc.) that manages the step sequence for that particular operation. The main program coordinates between states and handles the overall state transitions.
+
+## Key Benefits
+
+- **Predictable Behavior** - Clear state definitions eliminate unexpected machine behavior
+- **Maintainable Code** - Structured approach makes troubleshooting and modifications easier
+- **Safety Integration** - Built-in permission checking ensures safe operation
+- **Operator Interface** - Ready-made HMI structures for complete operator control
+- **Fault Recovery** - Automatic fault detection with retry capabilities
 
 ## Getting Started
 
-1. Explore the **Personal-Libraries** folder to understand available automation components
-2. Review the **Training HMI** project to see practical implementation examples
-3. Refer to individual project documentation for specific implementation details
+1. Import the `State_Machine.library` into your TwinCAT project
+2. Study the provided code example to understand the implementation pattern
+3. Create your own state programs based on your machine's specific sequences
+4. Configure safety permissions and HMI interface for your application
 
----
-
-*This repository represents ongoing development of industrial automation solutions using TwinCAT 3 technology.*
+This library transforms complex automation sequences into manageable, structured code that's easier to develop, debug, and maintain.
