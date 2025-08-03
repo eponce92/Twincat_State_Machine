@@ -14,7 +14,6 @@ VAR_INPUT
     inpStarvedCondition : DINT;          // Starved condition input
     inpSubmoduleFaulted : BOOL;          // Submodule fault indicator
     NextStep : DINT;                     // Next step to transition to
-    Commands : ST_SM_Commands;           // Command inputs (grouped)
 END_VAR
 
 VAR_OUTPUT
@@ -26,23 +25,24 @@ VAR_OUTPUT
     ConditionStatus : ST_SM_Conditions;  // Condition status (grouped)
 END_VAR
 
-VAR CONSTANT 
+VAR CONSTANT
     internalClearStep : ActiveStep;      // Constant for clearing a step
     EmptyHMIPerm : ST_PermIntlk_HMI;     // Empty HMI permissions structure
     
     // State constants
-    STATE_IDLE : DINT := 0;
-    STATE_RUNNING : DINT := 1;
-    STATE_STOPPING : DINT := 2;
-    STATE_HOMING : DINT := 4;
-    STATE_ABORTING : DINT := 8;
-    STATE_HOMED : DINT := 16;
-    STATE_STOPPED : DINT := 32;
-    STATE_ABORTED : DINT := 64;
-    STATE_COMPLETE : DINT := 128;
-    STATE_PAUSING : DINT := 256;
-    STATE_PAUSED : DINT := 512;
-    STATE_PROCEEDING : DINT := 1024;
+    STATE_IDLE : INT := 0;
+    STATE_RUNNING : INT := 1;
+    STATE_STOPPING : INT := 2;
+    STATE_HOMING : INT := 4;
+    STATE_ABORTING : INT := 8;
+    STATE_HOMED : INT := 16;
+    STATE_STOPPED : INT := 32;
+    STATE_ABORTED : INT := 64;
+    STATE_COMPLETE : INT := 128;
+    STATE_PAUSING : INT := 256;
+    STATE_PAUSED : INT := 512;
+    STATE_PROCEEDING : INT := 1024;
+
 END_VAR
 
 VAR
@@ -97,6 +97,7 @@ END_VAR
 VAR_IN_OUT 
     HMI : SM_HMI;                        // HMI interface
     CurrentStep : ActiveStep;            // Current active step
+	Commands : ST_SM_Commands;           // Command inputs (grouped)
 END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[
@@ -747,6 +748,8 @@ END_IF;
     <LineIds Name="FB_StateMachine">
       <LineId Id="2919" Count="633" />
       <LineId Id="9" Count="0" />
+      <LineId Id="638" Count="7" />
+      <LineId Id="2" Count="0" />
     </LineIds>
   </POU>
 </TcPlcObject>

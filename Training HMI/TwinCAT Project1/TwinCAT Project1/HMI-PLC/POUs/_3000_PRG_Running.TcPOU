@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.13">
-  <POU Name="PRG_Running" Id="{12345678-1234-1234-1234-123456789002}" SpecialFunc="None">
-    <Declaration><![CDATA[PROGRAM PRG_Running
+  <POU Name="_3000_PRG_Running" Id="{12345678-1234-1234-1234-123456789002}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM _3000_PRG_Running
 VAR_IN_OUT
     CurrentStep : ActiveStep;  // Shared step structure with state machine
 END_VAR
@@ -87,7 +87,7 @@ END_IF;
 fbStep3002(
     inpStep := CurrentStep.Step,
     cfgStep := 3002,
-    cfgNextStep := 0,  // 0 = sequence complete
+    cfgNextStep := 999,  // 0 = sequence complete
     inpStepTimerSeconds := StepTimerSeconds,
     inpRetry := RetrySignal,
     inpStepPermissives := step3002Perms,
@@ -119,7 +119,7 @@ IF fbStep3002.outStepActive THEN
 END_IF;
 ]]></ST>
     </Implementation>
-    <LineIds Name="PRG_Running">
+    <LineIds Name="_3000_PRG_Running">
       <LineId Id="1" Count="90" />
     </LineIds>
   </POU>

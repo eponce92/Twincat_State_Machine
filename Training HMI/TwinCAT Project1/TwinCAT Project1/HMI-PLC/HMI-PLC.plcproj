@@ -31,16 +31,16 @@
     <Compile Include="POUs\MAIN.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\PRG_Aborting.TcPOU">
+    <Compile Include="POUs\_5000_PRG_Aborting.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\PRG_Homing.TcPOU">
+    <Compile Include="POUs\_1000_PRG_Homing.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\PRG_Running.TcPOU">
+    <Compile Include="POUs\_3000_PRG_Running.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\PRG_Stopping.TcPOU">
+    <Compile Include="POUs\_2000_PRG_Stopping.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="POUs\VisualizationManager.TcVMO">

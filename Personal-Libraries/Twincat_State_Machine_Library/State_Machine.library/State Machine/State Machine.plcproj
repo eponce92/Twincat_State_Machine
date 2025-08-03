@@ -19,7 +19,7 @@
     <Company>Home</Company>
     <Released>false</Released>
     <Title>State Machine Twincat</Title>
-    <ProjectVersion>1.0.0.1</ProjectVersion>
+    <ProjectVersion>1.0.0.2</ProjectVersion>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="DUTs\Permissives\ST_PermIntlk_cfg.TcDUT">
@@ -131,6 +131,11 @@
       <DefaultResolution>Tc3_Module, * (Beckhoff Automation GmbH)</DefaultResolution>
       <Namespace>Tc3_Module</Namespace>
     </PlaceholderReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="State Machine.tmc">
+      <SubType>Content</SubType>
+    </None>
   </ItemGroup>
   <ProjectExtensions>
     <PlcProjectOptions>

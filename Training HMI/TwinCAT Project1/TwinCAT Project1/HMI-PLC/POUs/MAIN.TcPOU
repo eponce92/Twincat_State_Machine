@@ -26,8 +26,7 @@ VAR
 
 END_VAR]]></Declaration>
     <Implementation>
-      <ST><![CDATA[
-//=============================================================================
+      <ST><![CDATA[//=============================================================================
 // MAIN PROGRAM - State Machine Implementation with Sequence Programs
 //=============================================================================
 
@@ -37,7 +36,7 @@ nextStepFromSequence := 0;  // Default to no step change
 
 // Call appropriate sequence program based on current state
 IF fbStateMachine.Status.Homing THEN
-    PRG_Homing(
+    _1000_PRG_Homing(
         CurrentStep := currentStep,
         StepTimerSeconds := REAL_TO_DINT(fbStateMachine.StepInfo.StepTimerSeconds),
         RetrySignal := fbStateMachine.outRetry,
@@ -46,7 +45,7 @@ IF fbStateMachine.Status.Homing THEN
     );
     
 ELSIF fbStateMachine.Status.Running THEN
-    PRG_Running(
+    _3000_PRG_Running(
         CurrentStep := currentStep,
         StepTimerSeconds := REAL_TO_DINT(fbStateMachine.StepInfo.StepTimerSeconds),
         RetrySignal := fbStateMachine.outRetry,
@@ -55,7 +54,7 @@ ELSIF fbStateMachine.Status.Running THEN
     );
     
 ELSIF fbStateMachine.Status.Stopping THEN
-    PRG_Stopping(
+    _2000_PRG_Stopping(
         CurrentStep := currentStep,
         StepTimerSeconds := REAL_TO_DINT(fbStateMachine.StepInfo.StepTimerSeconds),
         RetrySignal := fbStateMachine.outRetry,
@@ -64,7 +63,7 @@ ELSIF fbStateMachine.Status.Stopping THEN
     );
     
 ELSIF fbStateMachine.Status.Aborting THEN
-    PRG_Aborting(
+    _5000_PRG_Aborting(
         CurrentStep := currentStep,
         StepTimerSeconds := REAL_TO_DINT(fbStateMachine.StepInfo.StepTimerSeconds),
         RetrySignal := fbStateMachine.outRetry,
@@ -74,15 +73,18 @@ ELSIF fbStateMachine.Status.Aborting THEN
 END_IF;
 
 // Signal completion when sequence reaches final step
-IF fbStateMachine.Status.Homing AND (nextStepFromSequence = 0) THEN
+
+
+IF fbStateMachine.Status.Homing AND (nextStepFromSequence = 999) THEN
     smCommands.CompleteState := TRUE;
-ELSIF fbStateMachine.Status.Running AND (nextStepFromSequence = 0) THEN
+ELSIF fbStateMachine.Status.Running AND (nextStepFromSequence = 999) THEN
     smCommands.CompleteState := TRUE;
-ELSIF fbStateMachine.Status.Stopping AND (nextStepFromSequence = 0) THEN
+ELSIF fbStateMachine.Status.Stopping AND (nextStepFromSequence = 999) THEN
     smCommands.CompleteState := TRUE;
-ELSIF fbStateMachine.Status.Aborting AND (nextStepFromSequence = 0) THEN
+ELSIF fbStateMachine.Status.Aborting AND (nextStepFromSequence = 999) THEN
     smCommands.CompleteState := TRUE;
 END_IF;
+
 
 // Call state machine with step input from active sequence
 fbStateMachine(
@@ -103,12 +105,7 @@ fbStateMachine(
 ]]></ST>
     </Implementation>
     <LineIds Name="MAIN">
-      <LineId Id="765" Count="13" />
-      <LineId Id="223" Count="0" />
-      <LineId Id="18" Count="52" />
-      <LineId Id="2" Count="0" />
-      <LineId Id="72" Count="2" />
-      <LineId Id="105" Count="1" />
+      <LineId Id="1036" Count="75" />
       <LineId Id="779" Count="0" />
     </LineIds>
   </POU>
