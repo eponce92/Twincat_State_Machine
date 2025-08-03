@@ -50,7 +50,6 @@
   <ItemGroup>
     <Folder Include="DUTs" />
     <Folder Include="GVLs" />
-    <Folder Include="State Machine" />
     <Folder Include="POUs" />
   </ItemGroup>
   <ItemGroup>
