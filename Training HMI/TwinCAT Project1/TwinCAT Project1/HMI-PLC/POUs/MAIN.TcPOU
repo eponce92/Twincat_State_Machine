@@ -23,16 +23,18 @@ VAR
     
     // Next step calculation - determined by active sequence programs
     nextStepFromSequence : DINT;
+    
+    // Individual next step outputs from each sequence program
+    nextStepHoming : DINT;
+    nextStepRunning : DINT;
+    nextStepStopping : DINT;
+    nextStepAborting : DINT;
 
 END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[//=============================================================================
 // MAIN PROGRAM - State Machine Implementation with Sequence Programs
 //=============================================================================
-
-// Execute sequence programs based on current state
-// Each program handles its specific state steps and returns the next step
-nextStepFromSequence := 0;  // Default to no step change
 
 //=============================================================================
 // CENTRALIZED INITIAL STEP SETTING
@@ -47,44 +49,67 @@ IF currentStep.Step = 0 THEN
         nextStepFromSequence := 2000;  // Start stopping sequence
     ELSIF fbStateMachine.Status.Aborting THEN
         nextStepFromSequence := 5000;  // Start aborting sequence
+    ELSE
+        nextStepFromSequence := 0;  // No initial step needed
     END_IF;
+END_IF;
+
+//=============================================================================
+// ALWAYS CALL ALL SEQUENCE PROGRAMS
+//=============================================================================
+// Call all sequence programs - FB_SequenceStep logic handles which steps are active
+// This ensures all tags update in real-time for better HMI visibility
+_1000_PRG_Homing(
+    CurrentStep := currentStep,
+    StepTimerSeconds := REAL_TO_DINT(fbStateMachine.StepInfo.StepTimerSeconds),
+    RetrySignal := fbStateMachine.outRetry,
+    StateMachineStatus := fbStateMachine.Status,
+    NextStep => nextStepHoming
+);
+
+_3000_PRG_Running(
+    CurrentStep := currentStep,
+    StepTimerSeconds := REAL_TO_DINT(fbStateMachine.StepInfo.StepTimerSeconds),
+    RetrySignal := fbStateMachine.outRetry,
+    StateMachineStatus := fbStateMachine.Status,
+    NextStep => nextStepRunning
+);
+
+_2000_PRG_Stopping(
+    CurrentStep := currentStep,
+    StepTimerSeconds := REAL_TO_DINT(fbStateMachine.StepInfo.StepTimerSeconds),
+    RetrySignal := fbStateMachine.outRetry,
+    StateMachineStatus := fbStateMachine.Status,
+    NextStep => nextStepStopping
+);
+
+_5000_PRG_Aborting(
+    CurrentStep := currentStep,
+    StepTimerSeconds := REAL_TO_DINT(fbStateMachine.StepInfo.StepTimerSeconds),
+    RetrySignal := fbStateMachine.outRetry,
+    StateMachineStatus := fbStateMachine.Status,
+    NextStep => nextStepAborting
+);
+
+//=============================================================================
+// DETERMINE NEXT STEP FROM ACTIVE SEQUENCE
+//=============================================================================
+// Use the initial step setting if we just set it, otherwise use sequence output
+IF currentStep.Step = 0 AND nextStepFromSequence <> 0 THEN
+    // Keep the initial step we just set above
+    // nextStepFromSequence already set correctly
 ELSE
-    // Call appropriate sequence program based on current state
-    IF fbStateMachine.Status.Homing THEN
-        _1000_PRG_Homing(
-            CurrentStep := currentStep,
-            StepTimerSeconds := REAL_TO_DINT(fbStateMachine.StepInfo.StepTimerSeconds),
-            RetrySignal := fbStateMachine.outRetry,
-            StateMachineStatus := fbStateMachine.Status,
-            NextStep => nextStepFromSequence
-        );
-        
-    ELSIF fbStateMachine.Status.Running THEN
-        _3000_PRG_Running(
-            CurrentStep := currentStep,
-            StepTimerSeconds := REAL_TO_DINT(fbStateMachine.StepInfo.StepTimerSeconds),
-            RetrySignal := fbStateMachine.outRetry,
-            StateMachineStatus := fbStateMachine.Status,
-            NextStep => nextStepFromSequence
-        );
-        
-    ELSIF fbStateMachine.Status.Stopping THEN
-        _2000_PRG_Stopping(
-            CurrentStep := currentStep,
-            StepTimerSeconds := REAL_TO_DINT(fbStateMachine.StepInfo.StepTimerSeconds),
-            RetrySignal := fbStateMachine.outRetry,
-            StateMachineStatus := fbStateMachine.Status,
-            NextStep => nextStepFromSequence
-        );
-        
-    ELSIF fbStateMachine.Status.Aborting THEN
-        _5000_PRG_Aborting(
-            CurrentStep := currentStep,
-            StepTimerSeconds := REAL_TO_DINT(fbStateMachine.StepInfo.StepTimerSeconds),
-            RetrySignal := fbStateMachine.outRetry,
-            StateMachineStatus := fbStateMachine.Status,
-            NextStep => nextStepFromSequence
-        );
+    // Determine which sequence provided a valid next step (non-zero)
+    IF nextStepHoming <> 0 THEN
+        nextStepFromSequence := nextStepHoming;
+    ELSIF nextStepRunning <> 0 THEN
+        nextStepFromSequence := nextStepRunning;
+    ELSIF nextStepStopping <> 0 THEN
+        nextStepFromSequence := nextStepStopping;
+    ELSIF nextStepAborting <> 0 THEN
+        nextStepFromSequence := nextStepAborting;
+    ELSE
+        nextStepFromSequence := currentStep.Step;  // No change
     END_IF;
 END_IF;
 

@@ -37,8 +37,14 @@ END_VAR]]></Declaration>
 //=============================================================================
 // SEQUENCE CONTROL LOGIC
 //=============================================================================
-// Default to current step - will be overridden by active step logic below
-NextStep := CurrentStep.Step;
+// Only set NextStep if this sequence has an active step (5000-5999 range)
+IF CurrentStep.Step >= 5000 AND CurrentStep.Step <= 5999 THEN
+    // Default to current step - will be overridden by active step logic below
+    NextStep := CurrentStep.Step;
+ELSE
+    // Not our sequence - don't modify NextStep
+    NextStep := 0;  // No change signal
+END_IF;
 
 //=============================================================================
 // STEP 5000 - ABORT PREPARE
