@@ -32,17 +32,13 @@ END_VAR]]></Declaration>
 //=============================================================================
 // Step numbering: 2000, 2002 (even numbers)
 // Fault steps: 2001, 2003 (odd numbers, +1 of original)
+// NOTE: Initial step setting (CurrentStep.Step = 0) is handled in MAIN program
 
 //=============================================================================
 // SEQUENCE CONTROL LOGIC
 //=============================================================================
-// Initialize sequence when first entering STOPPING state
-IF StateMachineStatus.Stopping AND CurrentStep.Step = 0 THEN
-    NextStep := 2000;  // Start with first stopping step
-ELSE
-    // Default to current step - will be overridden by active step logic below
-    NextStep := CurrentStep.Step;
-END_IF;
+// Default to current step - will be overridden by active step logic below
+NextStep := CurrentStep.Step;
 
 //=============================================================================
 // STEP 2000 - STOP PREPARE

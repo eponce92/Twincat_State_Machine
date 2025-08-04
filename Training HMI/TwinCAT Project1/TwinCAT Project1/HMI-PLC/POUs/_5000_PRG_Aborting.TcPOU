@@ -32,17 +32,13 @@ END_VAR]]></Declaration>
 //=============================================================================
 // Step numbering: 5000, 5002 (even numbers)
 // Fault steps: 5001, 5003 (odd numbers, +1 of original)
+// NOTE: Initial step setting (CurrentStep.Step = 0) is handled in MAIN program
 
 //=============================================================================
 // SEQUENCE CONTROL LOGIC
 //=============================================================================
-// Initialize sequence when first entering ABORTING state
-IF StateMachineStatus.Aborting AND CurrentStep.Step = 0 THEN
-    NextStep := 5000;  // Start with first aborting step
-ELSE
-    // Default to current step - will be overridden by active step logic below
-    NextStep := CurrentStep.Step;
-END_IF;
+// Default to current step - will be overridden by active step logic below
+NextStep := CurrentStep.Step;
 
 //=============================================================================
 // STEP 5000 - ABORT PREPARE

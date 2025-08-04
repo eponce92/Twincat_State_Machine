@@ -32,17 +32,13 @@ END_VAR]]></Declaration>
 //=============================================================================
 // Step numbering: 1000, 1002 (even numbers)
 // Fault steps: 1001, 1003 (odd numbers, +1 of original)
+// NOTE: Initial step setting (CurrentStep.Step = 0) is handled in MAIN program
 
 //=============================================================================
 // SEQUENCE CONTROL LOGIC
 //=============================================================================
-// Initialize sequence when first entering HOMING state
-IF StateMachineStatus.Homing AND CurrentStep.Step = 0 THEN
-    NextStep := 1000;  // Start with first homing step
-ELSE
-    // Default to current step - will be overridden by active step logic below
-    NextStep := CurrentStep.Step;
-END_IF;
+// Default to current step - will be overridden by active step logic below
+NextStep := CurrentStep.Step;
 
 //=============================================================================
 // STEP 1000 - HOME INITIALIZE

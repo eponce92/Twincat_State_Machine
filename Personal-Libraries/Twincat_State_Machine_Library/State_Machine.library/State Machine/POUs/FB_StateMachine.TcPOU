@@ -377,12 +377,14 @@ IF EnableIn THEN
     IF CommandsRequested.CompleteState AND Status.Homing THEN
         NextStep := 0;
         StepInfo.CurrentState := STATE_HOMED;
+        CommandsRequested.CompleteState := FALSE;  // Clear after transition
     END_IF;
     
     // Running to Complete
     IF CommandsRequested.CompleteState AND Status.Running THEN
         NextStep := 0;
         StepInfo.CurrentState := STATE_COMPLETE;
+        CommandsRequested.CompleteState := FALSE;  // Clear after transition
     END_IF;
     
     // Running to Stopping
@@ -394,12 +396,14 @@ IF EnableIn THEN
     IF CommandsRequested.CompleteState AND Status.Stopping THEN
         NextStep := 0;
         StepInfo.CurrentState := STATE_STOPPED;
+        CommandsRequested.CompleteState := FALSE;  // Clear after transition
     END_IF;
     
     // Aborting to Aborted
     IF CommandsRequested.CompleteState AND Status.Aborting THEN
         NextStep := 0;
         StepInfo.CurrentState := STATE_ABORTED;
+        CommandsRequested.CompleteState := FALSE;  // Clear after transition
     END_IF;
     
     // Active State to Pausing
@@ -430,6 +434,7 @@ IF EnableIn THEN
     IF CommandsRequested.CompleteState AND Status.Pausing THEN
         NextStep := 0;
         StepInfo.CurrentState := STATE_PAUSED;
+        CommandsRequested.CompleteState := FALSE;  // Clear after transition
     END_IF;
     
     // Proceeding to Step before Pausing
@@ -437,6 +442,7 @@ IF EnableIn THEN
         CurrentStep := PauseStep;
         NextStep := ReturnNextStep;
         StepInfo.CurrentState := ReturnState;
+        CommandsRequested.CompleteState := FALSE;  // Clear after transition
     END_IF;
     
     // Homed to Running

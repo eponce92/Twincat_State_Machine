@@ -34,57 +34,68 @@ END_VAR]]></Declaration>
 // Each program handles its specific state steps and returns the next step
 nextStepFromSequence := 0;  // Default to no step change
 
-// Call appropriate sequence program based on current state
-IF fbStateMachine.Status.Homing THEN
-    _1000_PRG_Homing(
-        CurrentStep := currentStep,
-        StepTimerSeconds := REAL_TO_DINT(fbStateMachine.StepInfo.StepTimerSeconds),
-        RetrySignal := fbStateMachine.outRetry,
-        StateMachineStatus := fbStateMachine.Status,
-        NextStep => nextStepFromSequence
-    );
-    
-ELSIF fbStateMachine.Status.Running THEN
-    _3000_PRG_Running(
-        CurrentStep := currentStep,
-        StepTimerSeconds := REAL_TO_DINT(fbStateMachine.StepInfo.StepTimerSeconds),
-        RetrySignal := fbStateMachine.outRetry,
-        StateMachineStatus := fbStateMachine.Status,
-        NextStep => nextStepFromSequence
-    );
-    
-ELSIF fbStateMachine.Status.Stopping THEN
-    _2000_PRG_Stopping(
-        CurrentStep := currentStep,
-        StepTimerSeconds := REAL_TO_DINT(fbStateMachine.StepInfo.StepTimerSeconds),
-        RetrySignal := fbStateMachine.outRetry,
-        StateMachineStatus := fbStateMachine.Status,
-        NextStep => nextStepFromSequence
-    );
-    
-ELSIF fbStateMachine.Status.Aborting THEN
-    _5000_PRG_Aborting(
-        CurrentStep := currentStep,
-        StepTimerSeconds := REAL_TO_DINT(fbStateMachine.StepInfo.StepTimerSeconds),
-        RetrySignal := fbStateMachine.outRetry,
-        StateMachineStatus := fbStateMachine.Status,
-        NextStep => nextStepFromSequence
-    );
+//=============================================================================
+// CENTRALIZED INITIAL STEP SETTING
+//=============================================================================
+// Initialize sequence when first entering any state (CurrentStep.Step = 0)
+IF currentStep.Step = 0 THEN
+    IF fbStateMachine.Status.Homing THEN
+        nextStepFromSequence := 1000;  // Start homing sequence
+    ELSIF fbStateMachine.Status.Running THEN
+        nextStepFromSequence := 3000;  // Start running sequence
+    ELSIF fbStateMachine.Status.Stopping THEN
+        nextStepFromSequence := 2000;  // Start stopping sequence
+    ELSIF fbStateMachine.Status.Aborting THEN
+        nextStepFromSequence := 5000;  // Start aborting sequence
+    END_IF;
+ELSE
+    // Call appropriate sequence program based on current state
+    IF fbStateMachine.Status.Homing THEN
+        _1000_PRG_Homing(
+            CurrentStep := currentStep,
+            StepTimerSeconds := REAL_TO_DINT(fbStateMachine.StepInfo.StepTimerSeconds),
+            RetrySignal := fbStateMachine.outRetry,
+            StateMachineStatus := fbStateMachine.Status,
+            NextStep => nextStepFromSequence
+        );
+        
+    ELSIF fbStateMachine.Status.Running THEN
+        _3000_PRG_Running(
+            CurrentStep := currentStep,
+            StepTimerSeconds := REAL_TO_DINT(fbStateMachine.StepInfo.StepTimerSeconds),
+            RetrySignal := fbStateMachine.outRetry,
+            StateMachineStatus := fbStateMachine.Status,
+            NextStep => nextStepFromSequence
+        );
+        
+    ELSIF fbStateMachine.Status.Stopping THEN
+        _2000_PRG_Stopping(
+            CurrentStep := currentStep,
+            StepTimerSeconds := REAL_TO_DINT(fbStateMachine.StepInfo.StepTimerSeconds),
+            RetrySignal := fbStateMachine.outRetry,
+            StateMachineStatus := fbStateMachine.Status,
+            NextStep => nextStepFromSequence
+        );
+        
+    ELSIF fbStateMachine.Status.Aborting THEN
+        _5000_PRG_Aborting(
+            CurrentStep := currentStep,
+            StepTimerSeconds := REAL_TO_DINT(fbStateMachine.StepInfo.StepTimerSeconds),
+            RetrySignal := fbStateMachine.outRetry,
+            StateMachineStatus := fbStateMachine.Status,
+            NextStep => nextStepFromSequence
+        );
+    END_IF;
 END_IF;
 
-// Signal completion when sequence reaches final step
-
-
-IF fbStateMachine.Status.Homing AND (nextStepFromSequence = 999) THEN
+//=============================================================================
+// CENTRALIZED SEQUENCE COMPLETION LOGIC
+//=============================================================================
+// Handle step 999 completion signal - centralized for all sequences
+IF nextStepFromSequence = 999 THEN
     smCommands.CompleteState := TRUE;
-ELSIF fbStateMachine.Status.Running AND (nextStepFromSequence = 999) THEN
-    smCommands.CompleteState := TRUE;
-ELSIF fbStateMachine.Status.Stopping AND (nextStepFromSequence = 999) THEN
-    smCommands.CompleteState := TRUE;
-ELSIF fbStateMachine.Status.Aborting AND (nextStepFromSequence = 999) THEN
-    smCommands.CompleteState := TRUE;
+    nextStepFromSequence := 0;  // Reset to no step
 END_IF;
-
 
 // Call state machine with step input from active sequence
 fbStateMachine(
@@ -105,8 +116,20 @@ fbStateMachine(
 ]]></ST>
     </Implementation>
     <LineIds Name="MAIN">
-      <LineId Id="1036" Count="75" />
-      <LineId Id="779" Count="0" />
+      <LineId Id="1036" Count="11" />
+      <LineId Id="1049" Count="8" />
+      <LineId Id="1059" Count="8" />
+      <LineId Id="1069" Count="8" />
+      <LineId Id="1079" Count="3" />
+      <LineId Id="1085" Count="1" />
+      <LineId Id="1112" Count="0" />
+      <LineId Id="1087" Count="1" />
+      <LineId Id="1113" Count="0" />
+      <LineId Id="1089" Count="1" />
+      <LineId Id="1114" Count="0" />
+      <LineId Id="1091" Count="1" />
+      <LineId Id="1115" Count="0" />
+      <LineId Id="1093" Count="7" />
     </LineIds>
   </POU>
 </TcPlcObject>

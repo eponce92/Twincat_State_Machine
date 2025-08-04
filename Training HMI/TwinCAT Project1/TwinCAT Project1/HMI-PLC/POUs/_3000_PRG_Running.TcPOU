@@ -32,17 +32,13 @@ END_VAR]]></Declaration>
 //=============================================================================
 // Step numbering: 3000, 3002 (even numbers)
 // Fault steps: 3001, 3003 (odd numbers, +1 of original)
+// NOTE: Initial step setting (CurrentStep.Step = 0) is handled in MAIN program
 
 //=============================================================================
 // SEQUENCE CONTROL LOGIC
 //=============================================================================
-// Initialize sequence when first entering RUNNING state
-IF StateMachineStatus.Running AND CurrentStep.Step = 0 THEN
-    NextStep := 3000;  // Start with first running step
-ELSE
-    // Default to current step - will be overridden by active step logic below
-    NextStep := CurrentStep.Step;
-END_IF;
+// Default to current step - will be overridden by active step logic below
+NextStep := CurrentStep.Step;
 
 //=============================================================================
 // STEP 3000 - PRODUCTION START
