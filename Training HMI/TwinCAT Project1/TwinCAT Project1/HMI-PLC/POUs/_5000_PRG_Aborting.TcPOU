@@ -4,16 +4,13 @@
     <Declaration><![CDATA[PROGRAM _5000_PRG_Aborting
 VAR_IN_OUT
     CurrentStep : ActiveStep;  // Shared step structure with state machine
+	NextStep: DINT; // Next step to be modified by sequences
 END_VAR
 
 VAR_INPUT
     StepTimerSeconds : DINT;   // Timer value from state machine
     RetrySignal : BOOL;        // Retry signal from state machine
     StateMachineStatus : ST_SM_Status;  // Complete state machine status
-END_VAR
-
-VAR_OUTPUT
-    NextStep : DINT;           // Next step to transition to
 END_VAR
 
 VAR
@@ -34,17 +31,7 @@ END_VAR]]></Declaration>
 // Fault steps: 5001, 5003 (odd numbers, +1 of original)
 // NOTE: Initial step setting (CurrentStep.Step = 0) is handled in MAIN program
 
-//=============================================================================
-// SEQUENCE CONTROL LOGIC
-//=============================================================================
-// Only set NextStep if this sequence has an active step (5000-5999 range)
-IF CurrentStep.Step >= 5000 AND CurrentStep.Step <= 5999 THEN
-    // Default to current step - will be overridden by active step logic below
-    NextStep := CurrentStep.Step;
-ELSE
-    // Not our sequence - don't modify NextStep
-    NextStep := 0;  // No change signal
-END_IF;
+
 
 //=============================================================================
 // STEP 5000 - ABORT PREPARE
@@ -63,11 +50,14 @@ fbStep5000(
 
 // Step 5000 Active Logic
 IF fbStep5000.outStepActive THEN
-    // Permissives simulation - Simulate based on timer
-    IF StepTimerSeconds < 2 THEN
-        step5000Perms := 16#FFFE;  // Bit 0 not OK (not ready yet)
-    ELSE
-        step5000Perms := -1;  // All permissives OK
+    // Only simulate permissives if step is active but not advancing
+    IF fbStep5000.outNextStep = fbStep5000.cfgStep THEN  // Step is waiting for permissives
+        // Permissives simulation - Simulate based on timer
+        IF StepTimerSeconds < 2 THEN
+            step5000Perms := 16#FFFE;  // Bit 0 not OK (not ready yet)
+        ELSE
+            step5000Perms := -1;  // All permissives OK after 2 seconds
+        END_IF;
     END_IF;
     
     // HMI configuration and actions
@@ -81,6 +71,9 @@ IF fbStep5000.outStepActive THEN
     
     // FB_SequenceStep determines next step automatically based on permissives
     NextStep := fbStep5000.outNextStep;
+ELSE
+    // Reset permissives when step is not active (ensures fresh start next time)
+    step5000Perms := 16#FFFE;  // Reset to NOT OK when leaving step
 END_IF;
 
 //=============================================================================
@@ -100,11 +93,14 @@ fbStep5002(
 
 // Step 5002 Active Logic
 IF fbStep5002.outStepActive THEN
-    // Permissives simulation - Simulate based on timer
-    IF StepTimerSeconds < 6 THEN
-        step5002Perms := 16#FFFD;  // Bit 1 not OK (abort not complete)
-    ELSE
-        step5002Perms := -1;  // All permissives OK
+    // Only simulate permissives if step is active but not advancing
+    IF fbStep5002.outNextStep = fbStep5002.cfgStep THEN  // Step is waiting for permissives
+        // Permissives simulation - Simulate based on timer
+        IF StepTimerSeconds < 6 THEN
+            step5002Perms := 16#FFFD;  // Bit 1 not OK (abort not complete)
+        ELSE
+            step5002Perms := -1;  // All permissives OK after 6 seconds
+        END_IF;
     END_IF;
     
     // HMI configuration and actions
@@ -117,13 +113,20 @@ IF fbStep5002.outStepActive THEN
     // Example: Execute shutdown sequence, secure valves, stop motors, etc.
     
     // FB_SequenceStep determines next step automatically based on permissives
-    NextStep := fbStep5002.outNextStep;
+     NextStep := fbStep5002.outNextStep;
+ELSE
+    // Reset permissives when step is not active (ensures fresh start next time)
+    step5002Perms := 16#FFFD;  // Reset to NOT OK when leaving step
 END_IF;
+
 ]]></ST>
     </Implementation>
     <LineIds Name="_5000_PRG_Aborting">
-      <LineId Id="1" Count="70" />
-      <LineId Id="74" Count="19" />
+      <LineId Id="1" Count="6" />
+      <LineId Id="18" Count="53" />
+      <LineId Id="74" Count="20" />
+      <LineId Id="133" Count="0" />
+      <LineId Id="132" Count="0" />
     </LineIds>
   </POU>
 </TcPlcObject>

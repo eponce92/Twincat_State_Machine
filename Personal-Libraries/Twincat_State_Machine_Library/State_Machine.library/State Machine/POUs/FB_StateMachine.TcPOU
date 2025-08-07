@@ -13,7 +13,6 @@ VAR_INPUT
     inpStartPerm : INT := -1;            // Start permission input bits
     inpStarvedCondition : DINT;          // Starved condition input
     inpSubmoduleFaulted : BOOL;          // Submodule fault indicator
-    NextStep : DINT;                     // Next step to transition to
 END_VAR
 
 VAR_OUTPUT
@@ -62,6 +61,7 @@ VAR
     // Internal state tracking
     PauseStep : ActiveStep;              // Store step during pause
     PreviousState : DINT;                // Previous state
+    PreviousStep : DINT;                 // Previous step for reference
     TimerReset : BOOL;                   // Flag to reset timer
     LsOdd : DINT;                        // Odd step check for fault detection
     ONS : DINT;                          // General one-shot
@@ -97,6 +97,7 @@ END_VAR
 VAR_IN_OUT 
     HMI : SM_HMI;                        // HMI interface
     CurrentStep : ActiveStep;            // Current active step
+	NextStep : DINT;                     // Next step to transition to
 	Commands : ST_SM_Commands;           // Command inputs (grouped)
 END_VAR]]></Declaration>
     <Implementation>
@@ -579,12 +580,21 @@ IF EnableIn THEN
     R_TRIG_1(CLK := stepIsZero);
     IF R_TRIG_1.Q THEN
         CurrentStep := internalClearStep;
+        // Also reset timer when entering step 0 (state transitions)
+        TimerReset := TRUE;
+        StepTimer(IN := FALSE, PT := T#99H);
+        StepInfo.StepTimerSeconds := 0.0;  // Immediately clear the timer output
     END_IF;
     
-    // Update step when NextStep changes - AFTER clearing logic
+    // Detect step change and update step - AFTER clearing logic
     IF StepInfo.CurrentStep <> NextStep THEN
+        // Store previous step for reference
+        PreviousStep := StepInfo.CurrentStep;
         StepInfo.CurrentStep := NextStep;
         TimerReset := TRUE;
+        // Immediately reset timer when step changes
+        StepTimer(IN := FALSE, PT := T#99H);
+        StepInfo.StepTimerSeconds := 0.0;  // Immediately clear the timer output
     END_IF;
     
     // Synchronize shared CurrentStep.Step with internal step tracking - AFTER all step updates
@@ -595,23 +605,19 @@ IF EnableIn THEN
     // Step timer logic
     IF NOT Status.Paused OR (Status.Paused AND CommandsRequested.CompleteState) THEN
         IF TimerReset THEN
-            // Reset the timer by setting IN to FALSE for one scan
-            StepTimer(IN := FALSE);
+            // Keep timer reset for one scan, then clear flag
+            StepTimer(IN := FALSE, PT := T#99H);
+            StepInfo.StepTimerSeconds := 0.0;  // Ensure timer value is zero during reset
+            TimerReset := FALSE;
         ELSE
             // Normal timer operation
-            StepTimer.PT := T#99H;
-            StepTimer(IN := TRUE);
+            StepTimer(IN := TRUE, PT := T#99H);
+            // Convert timer value to seconds only when not resetting
+            StepInfo.StepTimerSeconds := UDINT_TO_REAL(TIME_TO_UDINT(StepTimer.ET)) / 1000.0;
         END_IF;
     ELSE
-        StepTimer(IN := FALSE);
-    END_IF;
-    
-    // Convert timer value to seconds
-    StepInfo.StepTimerSeconds := UDINT_TO_REAL(TIME_TO_UDINT(StepTimer.ET)) / 1000.0;
-    
-    // Reset timer flag when step matches NextStep (after timer has been reset)
-    IF TimerReset AND StepInfo.CurrentStep = NextStep THEN
-        TimerReset := FALSE;
+        StepTimer(IN := FALSE, PT := T#99H);
+        // Don't update StepTimerSeconds when paused unless transitioning
     END_IF;
     
     //-------------------------------------------------------------------------
@@ -756,6 +762,8 @@ END_IF;
       <LineId Id="9" Count="0" />
       <LineId Id="638" Count="7" />
       <LineId Id="2" Count="0" />
+      <LineId Id="647" Count="4" />
+      <LineId Id="3553" Count="0" />
     </LineIds>
   </POU>
 </TcPlcObject>

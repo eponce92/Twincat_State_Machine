@@ -19,17 +19,10 @@ VAR
     testAutoIntlk : INT := -1;  // All OK by default (-1 = all bits OK)
     testHomePerm : INT := -1;   // All OK by default
     testStartPerm : INT := -1;  // All OK by default
-    testProceedPerm : INT := -1; // All OK by default
-    
-    // Next step calculation - determined by active sequence programs
-    nextStepFromSequence : DINT;
-    
-    // Individual next step outputs from each sequence program
-    nextStepHoming : DINT;
-    nextStepRunning : DINT;
-    nextStepStopping : DINT;
-    nextStepAborting : DINT;
+    testProceedPerm : INT := -1; // All OK by default 
 
+	NextStep: DINT; // Next step to be modified by sequences
+	
 END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[//=============================================================================
@@ -42,21 +35,42 @@ END_VAR]]></Declaration>
 // Initialize sequence when first entering any state (CurrentStep.Step = 0)
 IF currentStep.Step = 0 THEN
     IF fbStateMachine.Status.Homing THEN
-        nextStepFromSequence := 1000;  // Start homing sequence
+        NextStep := 1000;  // Start homing sequence
+        // Force immediate timer reset on state entry
+        smCommands.CompleteState := FALSE;
     ELSIF fbStateMachine.Status.Running THEN
-        nextStepFromSequence := 3000;  // Start running sequence
+        NextStep := 3000;  // Start running sequence
+        smCommands.CompleteState := FALSE;
     ELSIF fbStateMachine.Status.Stopping THEN
-        nextStepFromSequence := 2000;  // Start stopping sequence
+        NextStep := 2000;  // Start stopping sequence
+        smCommands.CompleteState := FALSE;
     ELSIF fbStateMachine.Status.Aborting THEN
-        nextStepFromSequence := 5000;  // Start aborting sequence
+        NextStep := 5000;  // Start aborting sequence
+        smCommands.CompleteState := FALSE;
     ELSE
-        nextStepFromSequence := 0;  // No initial step needed
+        // No initial step needed
     END_IF;
 END_IF;
 
+// Call state machine BEFORE sequences to ensure timer is updated first
+fbStateMachine(
+    EnableIn := TRUE,              // Enable the state machine
+    cfgAutoRun := TRUE,           // Auto run configuration  
+    inpAutoIntlk := testAutoIntlk, // Auto interlocks
+    inpHomePerm := testHomePerm,   // Home permissions
+    inpStartPerm := testStartPerm, // Start permissions
+    inpProceedPerm := testProceedPerm, // Proceed permissions
+    NextStep := NextStep,  // Next step from active sequence program
+    Commands := smCommands,        // Command inputs
+    HMI := stateMachineHMI,        // HMI interface
+    CurrentStep := currentStep     // Current step (shared with sequences)
+);
+
+
 //=============================================================================
-// ALWAYS CALL ALL SEQUENCE PROGRAMS
+// ALWAYS CALL ALL SEQUENCE PROGRAMS - AFTER STATE MACHINE
 //=============================================================================
+// This ensures the timer has been properly updated before sequences evaluate
 // Call all sequence programs - FB_SequenceStep logic handles which steps are active
 // This ensures all tags update in real-time for better HMI visibility
 _1000_PRG_Homing(
@@ -64,7 +78,7 @@ _1000_PRG_Homing(
     StepTimerSeconds := REAL_TO_DINT(fbStateMachine.StepInfo.StepTimerSeconds),
     RetrySignal := fbStateMachine.outRetry,
     StateMachineStatus := fbStateMachine.Status,
-    NextStep => nextStepHoming
+	NextStep := NextStep,
 );
 
 _3000_PRG_Running(
@@ -72,7 +86,7 @@ _3000_PRG_Running(
     StepTimerSeconds := REAL_TO_DINT(fbStateMachine.StepInfo.StepTimerSeconds),
     RetrySignal := fbStateMachine.outRetry,
     StateMachineStatus := fbStateMachine.Status,
-    NextStep => nextStepRunning
+	NextStep := NextStep,
 );
 
 _2000_PRG_Stopping(
@@ -80,7 +94,7 @@ _2000_PRG_Stopping(
     StepTimerSeconds := REAL_TO_DINT(fbStateMachine.StepInfo.StepTimerSeconds),
     RetrySignal := fbStateMachine.outRetry,
     StateMachineStatus := fbStateMachine.Status,
-    NextStep => nextStepStopping
+	NextStep := NextStep,
 );
 
 _5000_PRG_Aborting(
@@ -88,73 +102,67 @@ _5000_PRG_Aborting(
     StepTimerSeconds := REAL_TO_DINT(fbStateMachine.StepInfo.StepTimerSeconds),
     RetrySignal := fbStateMachine.outRetry,
     StateMachineStatus := fbStateMachine.Status,
-    NextStep => nextStepAborting
-);
-
-//=============================================================================
-// DETERMINE NEXT STEP FROM ACTIVE SEQUENCE
-//=============================================================================
-// Use the initial step setting if we just set it, otherwise use sequence output
-IF currentStep.Step = 0 AND nextStepFromSequence <> 0 THEN
-    // Keep the initial step we just set above
-    // nextStepFromSequence already set correctly
-ELSE
-    // Determine which sequence provided a valid next step (non-zero)
-    IF nextStepHoming <> 0 THEN
-        nextStepFromSequence := nextStepHoming;
-    ELSIF nextStepRunning <> 0 THEN
-        nextStepFromSequence := nextStepRunning;
-    ELSIF nextStepStopping <> 0 THEN
-        nextStepFromSequence := nextStepStopping;
-    ELSIF nextStepAborting <> 0 THEN
-        nextStepFromSequence := nextStepAborting;
-    ELSE
-        nextStepFromSequence := currentStep.Step;  // No change
-    END_IF;
-END_IF;
-
-//=============================================================================
-// CENTRALIZED SEQUENCE COMPLETION LOGIC
-//=============================================================================
-// Handle step 999 completion signal - centralized for all sequences
-IF nextStepFromSequence = 999 THEN
-    smCommands.CompleteState := TRUE;
-    nextStepFromSequence := 0;  // Reset to no step
-END_IF;
-
-// Call state machine with step input from active sequence
-fbStateMachine(
-    EnableIn := TRUE,              // Enable the state machine
-    cfgAutoRun := FALSE,           // Auto run configuration  
-    inpAutoIntlk := testAutoIntlk, // Auto interlocks
-    inpHomePerm := testHomePerm,   // Home permissions
-    inpStartPerm := testStartPerm, // Start permissions
-    inpProceedPerm := testProceedPerm, // Proceed permissions
-    NextStep := nextStepFromSequence,  // Next step from active sequence program
-    Commands := smCommands,        // Command inputs
-    HMI := stateMachineHMI,        // HMI interface
-    CurrentStep := currentStep     // Current step (shared with sequences)
+	NextStep := NextStep,
 );
 
 
 
-]]></ST>
+
+//=============================================================================
+// SEQUENCE COMPLETED
+//=============================================================================
+
+IF	fbStateMachine.Status.Aborting OR
+	fbStateMachine.Status.Homing OR	
+	fbStateMachine.Status.Running OR	
+	fbStateMachine.Status.Stopping OR
+	fbStateMachine.Status.Pausing OR	
+	fbStateMachine.Status.Proceeding AND
+	currentStep.Step = 999 THEN
+	
+	smCommands.CompleteState := TRUE;	
+	
+END_IF;]]></ST>
     </Implementation>
     <LineIds Name="MAIN">
-      <LineId Id="1036" Count="11" />
-      <LineId Id="1049" Count="8" />
+      <LineId Id="1036" Count="2" />
+      <LineId Id="1155" Count="12" />
+      <LineId Id="1172" Count="1" />
+      <LineId Id="1168" Count="0" />
+      <LineId Id="1171" Count="0" />
+      <LineId Id="1057" Count="0" />
+      <LineId Id="1201" Count="14" />
+      <LineId Id="1200" Count="0" />
       <LineId Id="1059" Count="8" />
-      <LineId Id="1069" Count="8" />
-      <LineId Id="1079" Count="3" />
+      <LineId Id="1069" Count="1" />
+      <LineId Id="1199" Count="0" />
+      <LineId Id="1072" Count="5" />
+      <LineId Id="1079" Count="0" />
+      <LineId Id="1198" Count="0" />
+      <LineId Id="1081" Count="1" />
       <LineId Id="1085" Count="1" />
       <LineId Id="1112" Count="0" />
       <LineId Id="1087" Count="1" />
-      <LineId Id="1113" Count="0" />
+      <LineId Id="1197" Count="0" />
       <LineId Id="1089" Count="1" />
       <LineId Id="1114" Count="0" />
       <LineId Id="1091" Count="1" />
       <LineId Id="1115" Count="0" />
-      <LineId Id="1093" Count="7" />
+      <LineId Id="1093" Count="0" />
+      <LineId Id="1196" Count="0" />
+      <LineId Id="1095" Count="0" />
+      <LineId Id="1147" Count="0" />
+      <LineId Id="91" Count="0" />
+      <LineId Id="106" Count="0" />
+      <LineId Id="1179" Count="5" />
+      <LineId Id="1187" Count="2" />
+      <LineId Id="1191" Count="0" />
+      <LineId Id="1190" Count="0" />
+      <LineId Id="1186" Count="0" />
+      <LineId Id="1193" Count="0" />
+      <LineId Id="1195" Count="0" />
+      <LineId Id="1185" Count="0" />
+      <LineId Id="2" Count="0" />
     </LineIds>
   </POU>
 </TcPlcObject>

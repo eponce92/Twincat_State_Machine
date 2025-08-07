@@ -1882,7 +1882,7 @@ External Setpoint Generation:
 		</Motion>
 		<Plc>
 			<Project GUID="{2C41D41A-2644-4D36-82D2-076E2F9459E3}" Name="HMI-PLC" PrjFilePath="HMI-PLC\HMI-PLC.plcproj" TmcFilePath="HMI-PLC\HMI-PLC.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="HMI-PLC\HMI-PLC.tmc" TmcHash="{EA376800-C28E-05EF-F645-ECDA65A1A309}">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="HMI-PLC\HMI-PLC.tmc" TmcHash="{79702A71-5EAE-96F4-4DEB-6AFD28AB88E0}">
 					<Name>HMI-PLC Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Vars VarGrpType="1">
