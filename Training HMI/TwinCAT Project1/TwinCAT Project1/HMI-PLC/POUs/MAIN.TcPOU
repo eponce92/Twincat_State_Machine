@@ -112,12 +112,12 @@ _5000_PRG_Aborting(
 // SEQUENCE COMPLETED
 //=============================================================================
 
-IF	fbStateMachine.Status.Aborting OR
+IF	( fbStateMachine.Status.Aborting OR
 	fbStateMachine.Status.Homing OR	
 	fbStateMachine.Status.Running OR	
 	fbStateMachine.Status.Stopping OR
 	fbStateMachine.Status.Pausing OR	
-	fbStateMachine.Status.Proceeding AND
+	fbStateMachine.Status.Proceeding ) AND
 	currentStep.Step = 999 THEN
 	
 	smCommands.CompleteState := TRUE;	
@@ -163,6 +163,8 @@ END_IF;]]></ST>
       <LineId Id="1195" Count="0" />
       <LineId Id="1185" Count="0" />
       <LineId Id="2" Count="0" />
+      <LineId Id="96" Count="3" />
+      <LineId Id="1216" Count="0" />
     </LineIds>
   </POU>
 </TcPlcObject>
