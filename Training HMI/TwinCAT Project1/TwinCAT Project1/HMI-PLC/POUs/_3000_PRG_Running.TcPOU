@@ -16,10 +16,16 @@ VAR
     // Step function blocks for running sequence
     fbStep3000 : FB_SequenceStep;  // Production Start
     fbStep3002 : FB_SequenceStep;  // Production Execute
+    fbStep3004 : FB_SequenceStep;  // Production Quality Check
+    fbStep3006 : FB_SequenceStep;  // Packaging Prepare
+    fbStep3008 : FB_SequenceStep;  // Production Finalize
     
     // Step permissives (simulation for testing)
     step3000Perms : INT := -1;     // All OK for step 3000
     step3002Perms : INT := -1;     // All OK for step 3002
+    step3004Perms : INT := -1;     // All OK for step 3004
+    step3006Perms : INT := -1;     // All OK for step 3006
+    step3008Perms : INT := -1;     // All OK for step 3008
     
 END_VAR]]></Declaration>
     <Implementation>
@@ -80,7 +86,7 @@ END_IF;
 fbStep3002(
     inpStep := CurrentStep.Step,
     cfgStep := 3002,
-    cfgNextStep := 0,  // sequence complete
+    cfgNextStep := 3004,
     inpStepTimerSeconds := StepTimerSeconds,
     inpRetry := RetrySignal,
     inpStepPermissives := step3002Perms,
@@ -115,6 +121,120 @@ IF fbStep3002.outStepActive THEN
 ELSE
     // Reset permissives when step is not active (ensures fresh start next time)
     step3002Perms := 16#FFFD;  // Reset to NOT OK when leaving step
+END_IF;
+
+//=============================================================================
+// STEP 3004 - PRODUCTION QUALITY CHECK
+//=============================================================================
+fbStep3004(
+    inpStep := CurrentStep.Step,
+    cfgStep := 3004,
+    cfgNextStep := 3006,
+    inpStepTimerSeconds := StepTimerSeconds,
+    inpRetry := RetrySignal,
+    inpStepPermissives := step3004Perms,
+    cfgStepTimeout := 12,  // 12 second timeout
+    inpFaultStep := FALSE,
+    ActiveStep := CurrentStep
+);
+
+IF fbStep3004.outStepActive THEN
+    // Only simulate permissives if step is active but not advancing
+    IF fbStep3004.outNextStep = fbStep3004.cfgStep THEN  // Step is waiting for permissives
+        // Simulate based on timer: delay bit 2
+        IF StepTimerSeconds < 4 THEN
+            step3004Perms := 16#FFFB;  // Bit 2 not OK
+        ELSE
+            step3004Perms := -1;       // All OK
+        END_IF;
+    END_IF;
+
+    // HMI configuration and actions
+    CurrentStep.PermsHMI.Name := 'Production Quality Check';
+    CurrentStep.PermsHMI.Desc[0] := 'Inspection Running';
+    CurrentStep.PermsHMI.Desc[1] := 'Reject Bin Clear';
+    CurrentStep.PermsHMI.Desc[2] := 'Measurements In Spec';
+
+    // Advance handled by FB
+    NextStep := fbStep3004.outNextStep;
+ELSE
+    step3004Perms := 16#FFFB;  // Reset to NOT OK when leaving step
+END_IF;
+
+//=============================================================================
+// STEP 3006 - PACKAGING PREPARE
+//=============================================================================
+fbStep3006(
+    inpStep := CurrentStep.Step,
+    cfgStep := 3006,
+    cfgNextStep := 3008,
+    inpStepTimerSeconds := StepTimerSeconds,
+    inpRetry := RetrySignal,
+    inpStepPermissives := step3006Perms,
+    cfgStepTimeout := 15,  // 15 second timeout
+    inpFaultStep := FALSE,
+    ActiveStep := CurrentStep
+);
+
+IF fbStep3006.outStepActive THEN
+    // Only simulate permissives if step is active but not advancing
+    IF fbStep3006.outNextStep = fbStep3006.cfgStep THEN  // Step is waiting for permissives
+        // Simulate based on timer: delay bit 3
+        IF StepTimerSeconds < 6 THEN
+            step3006Perms := 16#FFF7;  // Bit 3 not OK
+        ELSE
+            step3006Perms := -1;       // All OK
+        END_IF;
+    END_IF;
+
+    // HMI configuration and actions
+    CurrentStep.PermsHMI.Name := 'Packaging Prepare';
+    CurrentStep.PermsHMI.Desc[0] := 'Empty Boxes Available';
+    CurrentStep.PermsHMI.Desc[1] := 'Labeler Ready';
+    CurrentStep.PermsHMI.Desc[2] := 'Conveyor Clear';
+
+    // Advance handled by FB
+    NextStep := fbStep3006.outNextStep;
+ELSE
+    step3006Perms := 16#FFF7;  // Reset to NOT OK when leaving step
+END_IF;
+
+//=============================================================================
+// STEP 3008 - PRODUCTION FINALIZE
+//=============================================================================
+fbStep3008(
+    inpStep := CurrentStep.Step,
+    cfgStep := 3008,
+    cfgNextStep := 0,  // sequence complete
+    inpStepTimerSeconds := StepTimerSeconds,
+    inpRetry := RetrySignal,
+    inpStepPermissives := step3008Perms,
+    cfgStepTimeout := 10,  // 10 second timeout
+    inpFaultStep := FALSE,
+    ActiveStep := CurrentStep
+);
+
+IF fbStep3008.outStepActive THEN
+    // Only simulate permissives if step is active but not advancing
+    IF fbStep3008.outNextStep = fbStep3008.cfgStep THEN  // Step is waiting for permissives
+        // Simulate based on timer: delay bit 4
+        IF StepTimerSeconds < 5 THEN
+            step3008Perms := 16#FFEF;  // Bit 4 not OK
+        ELSE
+            step3008Perms := -1;       // All OK
+        END_IF;
+    END_IF;
+
+    // HMI configuration and actions
+    CurrentStep.PermsHMI.Name := 'Production Finalize';
+    CurrentStep.PermsHMI.Desc[0] := 'Batch Closed';
+    CurrentStep.PermsHMI.Desc[1] := 'Reports Generated';
+    CurrentStep.PermsHMI.Desc[2] := 'Area Clear';
+
+    // Advance handled by FB
+    NextStep := fbStep3008.outNextStep;
+ELSE
+    step3008Perms := 16#FFEF;  // Reset to NOT OK when leaving step
 END_IF;
 ]]></ST>
     </Implementation>
