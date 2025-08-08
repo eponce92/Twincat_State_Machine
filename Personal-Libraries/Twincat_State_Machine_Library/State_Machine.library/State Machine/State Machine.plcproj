@@ -82,12 +82,40 @@
     <Compile Include="POUs\FB_StateMachine.TcPOU">
       <SubType>Code</SubType>
     </Compile>
+    <!-- New Actuator DUTs -->
+    <Compile Include="DUTs\Actuators\TwoPos\E_TwoPosActuator_State.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\Actuators\TwoPos\E_TwoPosActuator_Fault.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\Actuators\TwoPos\ST_TwoPosActuator_IO.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\Actuators\TwoPos\ST_TwoPosActuator_Cfg.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\Actuators\TwoPos\ST_TwoPosActuator_Sts.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\Actuators\TwoPos\ST_TwoPosActuator_HMI_sts.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\Actuators\TwoPos\ST_TwoPosActuator_HMI.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <!-- New Actuator FB -->
+    <Compile Include="POUs\FB_TwoPosActuator.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="DUTs" />
     <Folder Include="DUTs\State Machine" />
     <Folder Include="DUTs\Permissives" />
     <Folder Include="DUTs\Steps" />
+    <Folder Include="DUTs\Actuators" />
+    <Folder Include="DUTs\Actuators\TwoPos" />
     <Folder Include="GVLs" />
     <Folder Include="VISUs" />
     <Folder Include="POUs" />

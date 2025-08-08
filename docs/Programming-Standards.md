@@ -32,8 +32,10 @@ These standards keep code consistent across libraries and projects. They match t
 
 ## Commands and modes
 
-- FBs should accept both pcmd* and ocmd* and OR them internally.
-- Conflicting commands (e.g., advance + retract) must fault with a clear code and de-energize outputs.
+- FBs should accept both pcmd* and ocmd* and select the active source by a bool mode input `inAutomatic`:
+  - When `inAutomatic=TRUE`, only `pcmd*` are honored.
+  - When `inAutomatic=FALSE`, only `ocmd*` are honored.
+- Conflicting commands (e.g., advance + retract) after mode selection must fault with a clear code and de-energize outputs.
 - Provide cmdReset to clear a latched fault when safe.
 
 ## State machines and timers

@@ -8,6 +8,8 @@ VAR_INPUT
     // Live permissive bits for Advance and Retract
     inPermAdv : INT := -1;             // -1 means all OK
     inPermRtr : INT := -1;
+    // Mode selection (typically wired to StateMachine.Status.Automatic)
+    inAutomatic : BOOL;                 // TRUE=auto (use pcmd*), FALSE=manual (use ocmd*)
     // Commands (program and operator)
     pcmdAdvance : BOOL;                 // Program command
     pcmdRetract : BOOL;
@@ -22,6 +24,7 @@ VAR_IN_OUT
     IO : ST_TwoPosActuator_IO;         // IO mapping
     permAdvHMI : ST_PermIntlk_HMI;     // HMI-bound permissives for Advance
     permRtrHMI : ST_PermIntlk_HMI;     // HMI-bound permissives for Retract
+    HMI : ST_TwoPosActuator_HMI;       // HMI data for faceplate
 END_VAR
 
 VAR_OUTPUT
@@ -46,10 +49,17 @@ VAR
     cmdDoAdvance : BOOL;
     cmdDoRetract : BOOL;
 
+    // Selected command sources per mode
+    reqAdvance : BOOL;
+    reqRetract : BOOL;
+
     // Internal
     motionTimeoutMs : TIME;
     bothFbk : BOOL;
     noneFbk : BOOL;
+
+    // Fault string buffer
+    faultBuf : STRING(80);
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -75,9 +85,13 @@ permRtrHMI.sts.PermIntlk := fbPermRtr.PermStatus;
 bothFbk := IO.inFbkAdvanced AND IO.inFbkRetracted;
 noneFbk := NOT IO.inFbkAdvanced AND NOT IO.inFbkRetracted;
 
-// Conflict commands detection (OR auto + manual inside)
-rTrigAdv(CLK := (pcmdAdvance OR ocmdAdvance));
-rTrigRtr(CLK := (pcmdRetract OR ocmdRetract));
+// Select command source by mode (auto: pcmd*, manual: ocmd*)
+reqAdvance := (inAutomatic AND pcmdAdvance) OR ((NOT inAutomatic) AND ocmdAdvance);
+reqRetract := (inAutomatic AND pcmdRetract) OR ((NOT inAutomatic) AND ocmdRetract);
+
+// Edges on selected commands only
+rTrigAdv(CLK := reqAdvance);
+rTrigRtr(CLK := reqRetract);
 rTrigReset(CLK := cmdReset);
 
 IF rTrigReset.Q THEN
@@ -94,11 +108,11 @@ IF sts.stsFaulted THEN
 END_IF;
 
 // Determine sanitized commands, apply permissives
-cmdDoAdvance := (pcmdAdvance OR ocmdAdvance) AND permAdvHMI.sts.OK;
-cmdDoRetract := (pcmdRetract OR ocmdRetract) AND permRtrHMI.sts.OK;
+cmdDoAdvance := reqAdvance AND permAdvHMI.sts.OK;
+cmdDoRetract := reqRetract AND permRtrHMI.sts.OK;
 
-// Conflicting commands
-IF cmdDoAdvance AND cmdDoRetract THEN
+// Conflicting commands (after mode selection)
+IF reqAdvance AND reqRetract THEN
     sts.stsFaulted := TRUE;
     sts.faultCode := E_TwoPosActuator_Fault.ConflictingCommands;
     sts.lastFaultCode := sts.faultCode;
@@ -259,16 +273,47 @@ CASE sts.state OF
 END_CASE;
 
 // If a command was requested but permissives not OK, fault
-IF (pcmdAdvance OR ocmdAdvance) AND NOT permAdvHMI.sts.OK THEN
+IF reqAdvance AND NOT permAdvHMI.sts.OK THEN
     sts.stsFaulted := TRUE;
     sts.faultCode := E_TwoPosActuator_Fault.PermissivesNotOK;
     sts.lastFaultCode := sts.faultCode;
 END_IF;
-IF (pcmdRetract OR ocmdRetract) AND NOT permRtrHMI.sts.OK THEN
+IF reqRetract AND NOT permRtrHMI.sts.OK THEN
     sts.stsFaulted := TRUE;
     sts.faultCode := E_TwoPosActuator_Fault.PermissivesNotOK;
     sts.lastFaultCode := sts.faultCode;
 END_IF;
+
+//------------------------------------------------------------------------------
+// HMI mapping
+//------------------------------------------------------------------------------
+HMI.sts.Advanced := sts.stsAdvanced;
+HMI.sts.Retracted := sts.stsRetracted;
+HMI.sts.Moving := sts.stsMoving;
+HMI.sts.Faulted := sts.stsFaulted;
+
+CASE sts.state OF
+    E_TwoPosActuator_State.Undefined: HMI.sts.StateString := 'Undefined';
+    E_TwoPosActuator_State.Retracted: HMI.sts.StateString := 'Retracted';
+    E_TwoPosActuator_State.Advancing: HMI.sts.StateString := 'Advancing';
+    E_TwoPosActuator_State.Advanced:  HMI.sts.StateString := 'Advanced';
+    E_TwoPosActuator_State.Retracting:HMI.sts.StateString := 'Retracting';
+    E_TwoPosActuator_State.Fault:     HMI.sts.StateString := 'Fault';
+END_CASE;
+
+// Fault string human readable
+CASE sts.faultCode OF
+    E_TwoPosActuator_Fault.None:              faultBuf := '';
+    E_TwoPosActuator_Fault.PermissivesNotOK:  faultBuf := 'Permissives not OK';
+    E_TwoPosActuator_Fault.ConflictingCommands: faultBuf := 'Conflicting commands';
+    E_TwoPosActuator_Fault.AdvanceTimeout:    faultBuf := 'Advance timeout';
+    E_TwoPosActuator_Fault.RetractTimeout:    faultBuf := 'Retract timeout';
+    E_TwoPosActuator_Fault.BothFeedbacksOn:   faultBuf := 'Both feedbacks ON';
+    E_TwoPosActuator_Fault.NoFeedbackAtRest:  faultBuf := 'No feedback at rest';
+    E_TwoPosActuator_Fault.UndefinedState:    faultBuf := 'Undefined state';
+END_CASE;
+HMI.faultCode := sts.faultCode;
+HMI.faultString := faultBuf;
 
 ]]></ST>
     </Implementation>
