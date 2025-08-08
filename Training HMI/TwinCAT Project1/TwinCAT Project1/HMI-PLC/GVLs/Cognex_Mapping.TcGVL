@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.13">
-  <GVL Name="IO_Mapping" Id="{9406d71c-8343-4ba7-a962-e4fa15adffb0}">
+  <GVL Name="Cognex_Mapping" Id="{9406d71c-8343-4ba7-a962-e4fa15adffb0}">
     <Declaration><![CDATA[{attribute 'qualified_only'}
 VAR_GLOBAL
 	

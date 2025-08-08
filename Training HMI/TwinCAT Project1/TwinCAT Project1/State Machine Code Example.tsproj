@@ -1882,278 +1882,308 @@ External Setpoint Generation:
 		</Motion>
 		<Plc>
 			<Project GUID="{2C41D41A-2644-4D36-82D2-076E2F9459E3}" Name="HMI-PLC" PrjFilePath="HMI-PLC\HMI-PLC.plcproj" TmcFilePath="HMI-PLC\HMI-PLC.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="HMI-PLC\HMI-PLC.tmc" TmcHash="{764103C8-7634-03AA-BB86-5233B5065D21}">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="HMI-PLC\HMI-PLC.tmc" TmcHash="{A84D8BF1-1A27-B16C-BB51-3A29B827EBB2}">
 					<Name>HMI-PLC Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Vars VarGrpType="1">
 						<Name>PlcTask Inputs</Name>
 						<Var>
-							<Name>IO_Mapping.inpTriggerReady</Name>
+							<Name>Cognex_Mapping.inpTriggerReady</Name>
 							<Comment><![CDATA[ COGNEX INSIGHT 7000 EIP EDS MAPPING
 --------------------------------------
  Inputs]]></Comment>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.inpTriggerAck</Name>
+							<Name>Cognex_Mapping.inpTriggerAck</Name>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.inpAcquiring</Name>
+							<Name>Cognex_Mapping.inpAcquiring</Name>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.inpMissedAcq</Name>
+							<Name>Cognex_Mapping.inpMissedAcq</Name>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.inpOfflineReason</Name>
+							<Name>Cognex_Mapping.inpOfflineReason</Name>
 							<Comment><![CDATA[ 3 bits represented as USINT (8 bits)]]></Comment>
 							<Type>USINT</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.inpOnline</Name>
+							<Name>Cognex_Mapping.inpOnline</Name>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.inpInspecting</Name>
+							<Name>Cognex_Mapping.inpInspecting</Name>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.inpInspectionComplete</Name>
+							<Name>Cognex_Mapping.inpInspectionComplete</Name>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.inpResultsBufferOverrun</Name>
+							<Name>Cognex_Mapping.inpResultsBufferOverrun</Name>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.inpResultsValid</Name>
+							<Name>Cognex_Mapping.inpResultsValid</Name>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.inpCommandExecuting</Name>
+							<Name>Cognex_Mapping.inpCommandExecuting</Name>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.inpCommandComplete</Name>
+							<Name>Cognex_Mapping.inpCommandComplete</Name>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.inpCommandFailed</Name>
+							<Name>Cognex_Mapping.inpCommandFailed</Name>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.inpNoname0ArrBIT</Name>
+							<Name>Cognex_Mapping.inpNoname0ArrBIT</Name>
 							<Type GUID="{54195CC7-3340-E483-343B-EF7951C3211B}">ARRAY [0..1] OF BOOL</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.inpExposureComplete</Name>
+							<Name>Cognex_Mapping.inpExposureComplete</Name>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.inpJobPass</Name>
+							<Name>Cognex_Mapping.inpJobPass</Name>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.inpTestRunReady</Name>
+							<Name>Cognex_Mapping.inpTestRunReady</Name>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.inpNoname1ArrBIT</Name>
+							<Name>Cognex_Mapping.inpNoname1ArrBIT</Name>
 							<Type GUID="{54195CC7-3340-E483-343B-EF7951C3211B}">ARRAY [0..1] OF BOOL</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.inpCurrentJobID</Name>
+							<Name>Cognex_Mapping.inpCurrentJobID</Name>
 							<Type>UINT</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.inpAcquisitionID</Name>
+							<Name>Cognex_Mapping.inpAcquisitionID</Name>
 							<Type>UINT</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.inpInspectionID</Name>
+							<Name>Cognex_Mapping.inpInspectionID</Name>
 							<Type>UINT</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.inpInspectionResultCode</Name>
+							<Name>Cognex_Mapping.inpInspectionResultCode</Name>
 							<Type>INT</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.inpInspectionResults</Name>
+							<Name>Cognex_Mapping.inpInspectionResults</Name>
 							<Type>BYTE</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.inpInspectionResults1</Name>
+							<Name>Cognex_Mapping.inpInspectionResults1</Name>
 							<Type>BYTE</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.inpInspectionResults2</Name>
+							<Name>Cognex_Mapping.inpInspectionResults2</Name>
 							<Type>BYTE</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.inpInspectionResults3</Name>
+							<Name>Cognex_Mapping.inpInspectionResults3</Name>
 							<Type>BYTE</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.inpInspectionResults4</Name>
+							<Name>Cognex_Mapping.inpInspectionResults4</Name>
 							<Type>BYTE</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.inpInspectionResults5</Name>
+							<Name>Cognex_Mapping.inpInspectionResults5</Name>
 							<Type>BYTE</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.inpInspectionResults6</Name>
+							<Name>Cognex_Mapping.inpInspectionResults6</Name>
 							<Type>BYTE</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.inpInspectionResults7</Name>
+							<Name>Cognex_Mapping.inpInspectionResults7</Name>
 							<Type>BYTE</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.inpInspectionResults8</Name>
+							<Name>Cognex_Mapping.inpInspectionResults8</Name>
 							<Type>BYTE</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.inpInspectionResults9</Name>
+							<Name>Cognex_Mapping.inpInspectionResults9</Name>
 							<Type>BYTE</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.inpInspectionResults10</Name>
+							<Name>Cognex_Mapping.inpInspectionResults10</Name>
 							<Type>BYTE</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.input1</Name>
+							<Name>Cognex_Mapping.input1</Name>
 							<Comment><![CDATA[--------------------------------------
  Regular IO ]]></Comment>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.input2</Name>
+							<Name>Cognex_Mapping.input2</Name>
 							<Type>BOOL</Type>
 						</Var>
 					</Vars>
 					<Vars VarGrpType="2" AreaNo="1">
 						<Name>PlcTask Outputs</Name>
 						<Var>
-							<Name>IO_Mapping.outTriggerEnable</Name>
+							<Name>Cognex_Mapping.outTriggerEnable</Name>
 							<Comment><![CDATA[ Outputs]]></Comment>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.outTriggerCamera</Name>
+							<Name>Cognex_Mapping.outTriggerCamera</Name>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.outBufferResultsEnable</Name>
+							<Name>Cognex_Mapping.outBufferResultsEnable</Name>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.outInspectionResultsAck</Name>
+							<Name>Cognex_Mapping.outInspectionResultsAck</Name>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.outExecuteCommand</Name>
+							<Name>Cognex_Mapping.outExecuteCommand</Name>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.outNoname0ArrBIT</Name>
+							<Name>Cognex_Mapping.outNoname0ArrBIT</Name>
 							<Type GUID="{54195CC7-3340-E483-343B-EF7951C3211B}">ARRAY [0..1] OF BOOL</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.outSetOffline</Name>
+							<Name>Cognex_Mapping.outSetOffline</Name>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.outSoftEvent0</Name>
+							<Name>Cognex_Mapping.outSoftEvent0</Name>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.outSoftEvent1</Name>
+							<Name>Cognex_Mapping.outSoftEvent1</Name>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.outSoftEvent2</Name>
+							<Name>Cognex_Mapping.outSoftEvent2</Name>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.outSoftEvent3</Name>
+							<Name>Cognex_Mapping.outSoftEvent3</Name>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.outSoftEvent4</Name>
+							<Name>Cognex_Mapping.outSoftEvent4</Name>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.outSoftEvent5</Name>
+							<Name>Cognex_Mapping.outSoftEvent5</Name>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.outSoftEvent6</Name>
+							<Name>Cognex_Mapping.outSoftEvent6</Name>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.outSoftEvent7</Name>
+							<Name>Cognex_Mapping.outSoftEvent7</Name>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.outUserData</Name>
+							<Name>Cognex_Mapping.outUserData</Name>
 							<Type>BYTE</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.outCommand</Name>
+							<Name>Cognex_Mapping.outCommand</Name>
 							<Type>UINT</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.outUserData1</Name>
+							<Name>Cognex_Mapping.outUserData1</Name>
 							<Type>BYTE</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.outUserData2</Name>
+							<Name>Cognex_Mapping.outUserData2</Name>
 							<Type>BYTE</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.outUserData3</Name>
+							<Name>Cognex_Mapping.outUserData3</Name>
 							<Type>BYTE</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.outUserData4</Name>
+							<Name>Cognex_Mapping.outUserData4</Name>
 							<Type>BYTE</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.outUserData5</Name>
+							<Name>Cognex_Mapping.outUserData5</Name>
 							<Type>BYTE</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.outUserData6</Name>
+							<Name>Cognex_Mapping.outUserData6</Name>
 							<Type>BYTE</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.outUserData7</Name>
+							<Name>Cognex_Mapping.outUserData7</Name>
 							<Type>BYTE</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.outUserData8</Name>
+							<Name>Cognex_Mapping.outUserData8</Name>
 							<Type>BYTE</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.outUserData9</Name>
+							<Name>Cognex_Mapping.outUserData9</Name>
 							<Type>BYTE</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.outUserData10</Name>
+							<Name>Cognex_Mapping.outUserData10</Name>
 							<Type>BYTE</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.output1</Name>
+							<Name>Cognex_Mapping.output1</Name>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
-							<Name>IO_Mapping.output2</Name>
+							<Name>Cognex_Mapping.output2</Name>
 							<Type>BOOL</Type>
 						</Var>
 					</Vars>
+					<UnrestoredVarLinks ImportTime="2025-08-08T16:32:16">
+						<OwnerA Name="InputDst" Prefix="TIPC^HMI-PLC^HMI-PLC Instance" Type="1">
+							<OwnerB Name="TIID^Device 1 (TC3 EIP Scanner)^Box 1 (In-Sight 7000 Series)">
+								<Link VarA="IO_Mapping.inpInspectionResults1" TypeA="BYTE" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Connection 1 (Input/Output)^Inputs^Inspection Results_1" RestoreInfo="ANotFound"/>
+								<Link VarA="IO_Mapping.inpInspectionResults10" TypeA="BYTE" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Connection 1 (Input/Output)^Inputs^Inspection Results_10" RestoreInfo="ANotFound"/>
+								<Link VarA="IO_Mapping.inpInspectionResults2" TypeA="BYTE" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Connection 1 (Input/Output)^Inputs^Inspection Results_2" RestoreInfo="ANotFound"/>
+								<Link VarA="IO_Mapping.inpInspectionResults3" TypeA="BYTE" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Connection 1 (Input/Output)^Inputs^Inspection Results_3" RestoreInfo="ANotFound"/>
+								<Link VarA="IO_Mapping.inpInspectionResults4" TypeA="BYTE" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Connection 1 (Input/Output)^Inputs^Inspection Results_4" RestoreInfo="ANotFound"/>
+								<Link VarA="IO_Mapping.inpInspectionResults5" TypeA="BYTE" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Connection 1 (Input/Output)^Inputs^Inspection Results_5" RestoreInfo="ANotFound"/>
+								<Link VarA="IO_Mapping.inpInspectionResults6" TypeA="BYTE" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Connection 1 (Input/Output)^Inputs^Inspection Results_6" RestoreInfo="ANotFound"/>
+								<Link VarA="IO_Mapping.inpInspectionResults7" TypeA="BYTE" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Connection 1 (Input/Output)^Inputs^Inspection Results_7" RestoreInfo="ANotFound"/>
+								<Link VarA="IO_Mapping.inpInspectionResults8" TypeA="BYTE" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Connection 1 (Input/Output)^Inputs^Inspection Results_8" RestoreInfo="ANotFound"/>
+								<Link VarA="IO_Mapping.inpInspectionResults9" TypeA="BYTE" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Connection 1 (Input/Output)^Inputs^Inspection Results_9" RestoreInfo="ANotFound"/>
+							</OwnerB>
+						</OwnerA>
+						<OwnerA Name="OutputSrc" Prefix="TIPC^HMI-PLC^HMI-PLC Instance" Type="2">
+							<OwnerB Name="TIID^Device 1 (TC3 EIP Scanner)^Box 1 (In-Sight 7000 Series)">
+								<Link VarA="IO_Mapping.outUserData1" TypeA="BYTE" InOutA="1" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Connection 1 (Input/Output)^Outputs^User Data_1" RestoreInfo="ANotFound"/>
+								<Link VarA="IO_Mapping.outUserData10" TypeA="BYTE" InOutA="1" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Connection 1 (Input/Output)^Outputs^User Data_10" RestoreInfo="ANotFound"/>
+								<Link VarA="IO_Mapping.outUserData2" TypeA="BYTE" InOutA="1" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Connection 1 (Input/Output)^Outputs^User Data_2" RestoreInfo="ANotFound"/>
+								<Link VarA="IO_Mapping.outUserData3" TypeA="BYTE" InOutA="1" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Connection 1 (Input/Output)^Outputs^User Data_3" RestoreInfo="ANotFound"/>
+								<Link VarA="IO_Mapping.outUserData4" TypeA="BYTE" InOutA="1" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Connection 1 (Input/Output)^Outputs^User Data_4" RestoreInfo="ANotFound"/>
+								<Link VarA="IO_Mapping.outUserData5" TypeA="BYTE" InOutA="1" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Connection 1 (Input/Output)^Outputs^User Data_5" RestoreInfo="ANotFound"/>
+								<Link VarA="IO_Mapping.outUserData6" TypeA="BYTE" InOutA="1" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Connection 1 (Input/Output)^Outputs^User Data_6" RestoreInfo="ANotFound"/>
+								<Link VarA="IO_Mapping.outUserData7" TypeA="BYTE" InOutA="1" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Connection 1 (Input/Output)^Outputs^User Data_7" RestoreInfo="ANotFound"/>
+								<Link VarA="IO_Mapping.outUserData8" TypeA="BYTE" InOutA="1" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Connection 1 (Input/Output)^Outputs^User Data_8" RestoreInfo="ANotFound"/>
+								<Link VarA="IO_Mapping.outUserData9" TypeA="BYTE" InOutA="1" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Connection 1 (Input/Output)^Outputs^User Data_9" RestoreInfo="ANotFound"/>
+							</OwnerB>
+						</OwnerA>
+					</UnrestoredVarLinks>
 					<Contexts>
 						<Context>
 							<Id>0</Id>
@@ -8478,71 +8508,51 @@ C:\TwinCAT\3.1\Config\Io\EtherNetIP\02A6006401090C00.eds
 		</OwnerA>
 		<OwnerA Name="TIPC^HMI-PLC^HMI-PLC Instance">
 			<OwnerB Name="TIID^Device 1 (TC3 EIP Scanner)^Box 1 (In-Sight 7000 Series)">
-				<Link VarA="PlcTask Inputs^IO_Mapping.inpAcquiring" VarB="Connection 1 (Input/Output)^Inputs^Acquiring"/>
-				<Link VarA="PlcTask Inputs^IO_Mapping.inpAcquisitionID" VarB="Connection 1 (Input/Output)^Inputs^Acquisition ID"/>
-				<Link VarA="PlcTask Inputs^IO_Mapping.inpCommandComplete" VarB="Connection 1 (Input/Output)^Inputs^Command Complete"/>
-				<Link VarA="PlcTask Inputs^IO_Mapping.inpCommandExecuting" VarB="Connection 1 (Input/Output)^Inputs^Command Executing"/>
-				<Link VarA="PlcTask Inputs^IO_Mapping.inpCommandFailed" VarB="Connection 1 (Input/Output)^Inputs^Command Failed"/>
-				<Link VarA="PlcTask Inputs^IO_Mapping.inpCurrentJobID" VarB="Connection 1 (Input/Output)^Inputs^Current Job ID"/>
-				<Link VarA="PlcTask Inputs^IO_Mapping.inpExposureComplete" VarB="Connection 1 (Input/Output)^Inputs^Exposure Complete"/>
-				<Link VarA="PlcTask Inputs^IO_Mapping.inpInspecting" VarB="Connection 1 (Input/Output)^Inputs^Inspecting"/>
-				<Link VarA="PlcTask Inputs^IO_Mapping.inpInspectionComplete" VarB="Connection 1 (Input/Output)^Inputs^Inspection Complete"/>
-				<Link VarA="PlcTask Inputs^IO_Mapping.inpInspectionID" VarB="Connection 1 (Input/Output)^Inputs^Inspection ID"/>
-				<Link VarA="PlcTask Inputs^IO_Mapping.inpInspectionResultCode" VarB="Connection 1 (Input/Output)^Inputs^Inspection Result Code"/>
-				<Link VarA="PlcTask Inputs^IO_Mapping.inpInspectionResults" VarB="Connection 1 (Input/Output)^Inputs^Inspection Results"/>
-				<Link VarA="PlcTask Inputs^IO_Mapping.inpInspectionResults1" VarB="Connection 1 (Input/Output)^Inputs^Inspection Results_1"/>
-				<Link VarA="PlcTask Inputs^IO_Mapping.inpInspectionResults10" VarB="Connection 1 (Input/Output)^Inputs^Inspection Results_10"/>
-				<Link VarA="PlcTask Inputs^IO_Mapping.inpInspectionResults2" VarB="Connection 1 (Input/Output)^Inputs^Inspection Results_2"/>
-				<Link VarA="PlcTask Inputs^IO_Mapping.inpInspectionResults3" VarB="Connection 1 (Input/Output)^Inputs^Inspection Results_3"/>
-				<Link VarA="PlcTask Inputs^IO_Mapping.inpInspectionResults4" VarB="Connection 1 (Input/Output)^Inputs^Inspection Results_4"/>
-				<Link VarA="PlcTask Inputs^IO_Mapping.inpInspectionResults5" VarB="Connection 1 (Input/Output)^Inputs^Inspection Results_5"/>
-				<Link VarA="PlcTask Inputs^IO_Mapping.inpInspectionResults6" VarB="Connection 1 (Input/Output)^Inputs^Inspection Results_6"/>
-				<Link VarA="PlcTask Inputs^IO_Mapping.inpInspectionResults7" VarB="Connection 1 (Input/Output)^Inputs^Inspection Results_7"/>
-				<Link VarA="PlcTask Inputs^IO_Mapping.inpInspectionResults8" VarB="Connection 1 (Input/Output)^Inputs^Inspection Results_8"/>
-				<Link VarA="PlcTask Inputs^IO_Mapping.inpInspectionResults9" VarB="Connection 1 (Input/Output)^Inputs^Inspection Results_9"/>
-				<Link VarA="PlcTask Inputs^IO_Mapping.inpJobPass" VarB="Connection 1 (Input/Output)^Inputs^Job Pass"/>
-				<Link VarA="PlcTask Inputs^IO_Mapping.inpMissedAcq" VarB="Connection 1 (Input/Output)^Inputs^Missed Acq"/>
-				<Link VarA="PlcTask Inputs^IO_Mapping.inpOfflineReason" VarB="Connection 1 (Input/Output)^Inputs^Offline Reason"/>
-				<Link VarA="PlcTask Inputs^IO_Mapping.inpOnline" VarB="Connection 1 (Input/Output)^Inputs^Online"/>
-				<Link VarA="PlcTask Inputs^IO_Mapping.inpResultsBufferOverrun" VarB="Connection 1 (Input/Output)^Inputs^Results Buffer Overrun"/>
-				<Link VarA="PlcTask Inputs^IO_Mapping.inpResultsValid" VarB="Connection 1 (Input/Output)^Inputs^Results Valid"/>
-				<Link VarA="PlcTask Inputs^IO_Mapping.inpTestRunReady" VarB="Connection 1 (Input/Output)^Inputs^Test Run Ready"/>
-				<Link VarA="PlcTask Inputs^IO_Mapping.inpTriggerAck" VarB="Connection 1 (Input/Output)^Inputs^Trigger Ack"/>
-				<Link VarA="PlcTask Inputs^IO_Mapping.inpTriggerReady" VarB="Connection 1 (Input/Output)^Inputs^Trigger Ready"/>
-				<Link VarA="PlcTask Outputs^IO_Mapping.outBufferResultsEnable" VarB="Connection 1 (Input/Output)^Outputs^Buffer Results Enable"/>
-				<Link VarA="PlcTask Outputs^IO_Mapping.outCommand" VarB="Connection 1 (Input/Output)^Outputs^Command"/>
-				<Link VarA="PlcTask Outputs^IO_Mapping.outExecuteCommand" VarB="Connection 1 (Input/Output)^Outputs^Execute Command"/>
-				<Link VarA="PlcTask Outputs^IO_Mapping.outInspectionResultsAck" VarB="Connection 1 (Input/Output)^Outputs^Inspection Results Ack"/>
-				<Link VarA="PlcTask Outputs^IO_Mapping.outSetOffline" VarB="Connection 1 (Input/Output)^Outputs^Set Offline"/>
-				<Link VarA="PlcTask Outputs^IO_Mapping.outSoftEvent0" VarB="Connection 1 (Input/Output)^Outputs^Soft Event 0"/>
-				<Link VarA="PlcTask Outputs^IO_Mapping.outSoftEvent1" VarB="Connection 1 (Input/Output)^Outputs^Soft Event 1"/>
-				<Link VarA="PlcTask Outputs^IO_Mapping.outSoftEvent2" VarB="Connection 1 (Input/Output)^Outputs^Soft Event 2"/>
-				<Link VarA="PlcTask Outputs^IO_Mapping.outSoftEvent3" VarB="Connection 1 (Input/Output)^Outputs^Soft Event 3"/>
-				<Link VarA="PlcTask Outputs^IO_Mapping.outSoftEvent4" VarB="Connection 1 (Input/Output)^Outputs^Soft Event 4"/>
-				<Link VarA="PlcTask Outputs^IO_Mapping.outSoftEvent5" VarB="Connection 1 (Input/Output)^Outputs^Soft Event 5"/>
-				<Link VarA="PlcTask Outputs^IO_Mapping.outSoftEvent6" VarB="Connection 1 (Input/Output)^Outputs^Soft Event 6"/>
-				<Link VarA="PlcTask Outputs^IO_Mapping.outSoftEvent7" VarB="Connection 1 (Input/Output)^Outputs^Soft Event 7"/>
-				<Link VarA="PlcTask Outputs^IO_Mapping.outTriggerCamera" VarB="Connection 1 (Input/Output)^Outputs^Trigger"/>
-				<Link VarA="PlcTask Outputs^IO_Mapping.outTriggerEnable" VarB="Connection 1 (Input/Output)^Outputs^Trigger Enable"/>
-				<Link VarA="PlcTask Outputs^IO_Mapping.outUserData" VarB="Connection 1 (Input/Output)^Outputs^User Data"/>
-				<Link VarA="PlcTask Outputs^IO_Mapping.outUserData1" VarB="Connection 1 (Input/Output)^Outputs^User Data_1"/>
-				<Link VarA="PlcTask Outputs^IO_Mapping.outUserData10" VarB="Connection 1 (Input/Output)^Outputs^User Data_10"/>
-				<Link VarA="PlcTask Outputs^IO_Mapping.outUserData2" VarB="Connection 1 (Input/Output)^Outputs^User Data_2"/>
-				<Link VarA="PlcTask Outputs^IO_Mapping.outUserData3" VarB="Connection 1 (Input/Output)^Outputs^User Data_3"/>
-				<Link VarA="PlcTask Outputs^IO_Mapping.outUserData4" VarB="Connection 1 (Input/Output)^Outputs^User Data_4"/>
-				<Link VarA="PlcTask Outputs^IO_Mapping.outUserData5" VarB="Connection 1 (Input/Output)^Outputs^User Data_5"/>
-				<Link VarA="PlcTask Outputs^IO_Mapping.outUserData6" VarB="Connection 1 (Input/Output)^Outputs^User Data_6"/>
-				<Link VarA="PlcTask Outputs^IO_Mapping.outUserData7" VarB="Connection 1 (Input/Output)^Outputs^User Data_7"/>
-				<Link VarA="PlcTask Outputs^IO_Mapping.outUserData8" VarB="Connection 1 (Input/Output)^Outputs^User Data_8"/>
-				<Link VarA="PlcTask Outputs^IO_Mapping.outUserData9" VarB="Connection 1 (Input/Output)^Outputs^User Data_9"/>
+				<Link VarA="PlcTask Inputs^Cognex_Mapping.inpAcquiring" VarB="Connection 1 (Input/Output)^Inputs^Acquiring"/>
+				<Link VarA="PlcTask Inputs^Cognex_Mapping.inpAcquisitionID" VarB="Connection 1 (Input/Output)^Inputs^Acquisition ID"/>
+				<Link VarA="PlcTask Inputs^Cognex_Mapping.inpCommandComplete" VarB="Connection 1 (Input/Output)^Inputs^Command Complete"/>
+				<Link VarA="PlcTask Inputs^Cognex_Mapping.inpCommandExecuting" VarB="Connection 1 (Input/Output)^Inputs^Command Executing"/>
+				<Link VarA="PlcTask Inputs^Cognex_Mapping.inpCommandFailed" VarB="Connection 1 (Input/Output)^Inputs^Command Failed"/>
+				<Link VarA="PlcTask Inputs^Cognex_Mapping.inpCurrentJobID" VarB="Connection 1 (Input/Output)^Inputs^Current Job ID"/>
+				<Link VarA="PlcTask Inputs^Cognex_Mapping.inpExposureComplete" VarB="Connection 1 (Input/Output)^Inputs^Exposure Complete"/>
+				<Link VarA="PlcTask Inputs^Cognex_Mapping.inpInspecting" VarB="Connection 1 (Input/Output)^Inputs^Inspecting"/>
+				<Link VarA="PlcTask Inputs^Cognex_Mapping.inpInspectionComplete" VarB="Connection 1 (Input/Output)^Inputs^Inspection Complete"/>
+				<Link VarA="PlcTask Inputs^Cognex_Mapping.inpInspectionID" VarB="Connection 1 (Input/Output)^Inputs^Inspection ID"/>
+				<Link VarA="PlcTask Inputs^Cognex_Mapping.inpInspectionResultCode" VarB="Connection 1 (Input/Output)^Inputs^Inspection Result Code"/>
+				<Link VarA="PlcTask Inputs^Cognex_Mapping.inpInspectionResults" VarB="Connection 1 (Input/Output)^Inputs^Inspection Results"/>
+				<Link VarA="PlcTask Inputs^Cognex_Mapping.inpJobPass" VarB="Connection 1 (Input/Output)^Inputs^Job Pass"/>
+				<Link VarA="PlcTask Inputs^Cognex_Mapping.inpMissedAcq" VarB="Connection 1 (Input/Output)^Inputs^Missed Acq"/>
+				<Link VarA="PlcTask Inputs^Cognex_Mapping.inpOfflineReason" VarB="Connection 1 (Input/Output)^Inputs^Offline Reason"/>
+				<Link VarA="PlcTask Inputs^Cognex_Mapping.inpOnline" VarB="Connection 1 (Input/Output)^Inputs^Online"/>
+				<Link VarA="PlcTask Inputs^Cognex_Mapping.inpResultsBufferOverrun" VarB="Connection 1 (Input/Output)^Inputs^Results Buffer Overrun"/>
+				<Link VarA="PlcTask Inputs^Cognex_Mapping.inpResultsValid" VarB="Connection 1 (Input/Output)^Inputs^Results Valid"/>
+				<Link VarA="PlcTask Inputs^Cognex_Mapping.inpTestRunReady" VarB="Connection 1 (Input/Output)^Inputs^Test Run Ready"/>
+				<Link VarA="PlcTask Inputs^Cognex_Mapping.inpTriggerAck" VarB="Connection 1 (Input/Output)^Inputs^Trigger Ack"/>
+				<Link VarA="PlcTask Inputs^Cognex_Mapping.inpTriggerReady" VarB="Connection 1 (Input/Output)^Inputs^Trigger Ready"/>
+				<Link VarA="PlcTask Outputs^Cognex_Mapping.outBufferResultsEnable" VarB="Connection 1 (Input/Output)^Outputs^Buffer Results Enable"/>
+				<Link VarA="PlcTask Outputs^Cognex_Mapping.outCommand" VarB="Connection 1 (Input/Output)^Outputs^Command"/>
+				<Link VarA="PlcTask Outputs^Cognex_Mapping.outExecuteCommand" VarB="Connection 1 (Input/Output)^Outputs^Execute Command"/>
+				<Link VarA="PlcTask Outputs^Cognex_Mapping.outInspectionResultsAck" VarB="Connection 1 (Input/Output)^Outputs^Inspection Results Ack"/>
+				<Link VarA="PlcTask Outputs^Cognex_Mapping.outSetOffline" VarB="Connection 1 (Input/Output)^Outputs^Set Offline"/>
+				<Link VarA="PlcTask Outputs^Cognex_Mapping.outSoftEvent0" VarB="Connection 1 (Input/Output)^Outputs^Soft Event 0"/>
+				<Link VarA="PlcTask Outputs^Cognex_Mapping.outSoftEvent1" VarB="Connection 1 (Input/Output)^Outputs^Soft Event 1"/>
+				<Link VarA="PlcTask Outputs^Cognex_Mapping.outSoftEvent2" VarB="Connection 1 (Input/Output)^Outputs^Soft Event 2"/>
+				<Link VarA="PlcTask Outputs^Cognex_Mapping.outSoftEvent3" VarB="Connection 1 (Input/Output)^Outputs^Soft Event 3"/>
+				<Link VarA="PlcTask Outputs^Cognex_Mapping.outSoftEvent4" VarB="Connection 1 (Input/Output)^Outputs^Soft Event 4"/>
+				<Link VarA="PlcTask Outputs^Cognex_Mapping.outSoftEvent5" VarB="Connection 1 (Input/Output)^Outputs^Soft Event 5"/>
+				<Link VarA="PlcTask Outputs^Cognex_Mapping.outSoftEvent6" VarB="Connection 1 (Input/Output)^Outputs^Soft Event 6"/>
+				<Link VarA="PlcTask Outputs^Cognex_Mapping.outSoftEvent7" VarB="Connection 1 (Input/Output)^Outputs^Soft Event 7"/>
+				<Link VarA="PlcTask Outputs^Cognex_Mapping.outTriggerCamera" VarB="Connection 1 (Input/Output)^Outputs^Trigger"/>
+				<Link VarA="PlcTask Outputs^Cognex_Mapping.outTriggerEnable" VarB="Connection 1 (Input/Output)^Outputs^Trigger Enable"/>
+				<Link VarA="PlcTask Outputs^Cognex_Mapping.outUserData" VarB="Connection 1 (Input/Output)^Outputs^User Data"/>
 			</OwnerB>
 			<OwnerB Name="TIID^Device 2 (EtherCAT)^Term 2 (EK1100)^Term 3 (EL1008)">
-				<Link VarA="PlcTask Inputs^IO_Mapping.input1" VarB="Channel 1^Input"/>
-				<Link VarA="PlcTask Inputs^IO_Mapping.input2" VarB="Channel 2^Input"/>
+				<Link VarA="PlcTask Inputs^Cognex_Mapping.input1" VarB="Channel 1^Input"/>
+				<Link VarA="PlcTask Inputs^Cognex_Mapping.input2" VarB="Channel 2^Input"/>
 			</OwnerB>
 			<OwnerB Name="TIID^Device 2 (EtherCAT)^Term 2 (EK1100)^Term 5 (EL2008)">
-				<Link VarA="PlcTask Outputs^IO_Mapping.output1" VarB="Channel 1^Output"/>
-				<Link VarA="PlcTask Outputs^IO_Mapping.output2" VarB="Channel 2^Output"/>
+				<Link VarA="PlcTask Outputs^Cognex_Mapping.output1" VarB="Channel 1^Output"/>
+				<Link VarA="PlcTask Outputs^Cognex_Mapping.output2" VarB="Channel 2^Output"/>
 			</OwnerB>
 		</OwnerA>
 	</Mappings>
