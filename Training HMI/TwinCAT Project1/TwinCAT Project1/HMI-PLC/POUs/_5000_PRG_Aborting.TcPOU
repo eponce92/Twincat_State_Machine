@@ -82,7 +82,7 @@ END_IF;
 fbStep5002(
     inpStep := CurrentStep.Step,
     cfgStep := 5002,
-    cfgNextStep := 999,  // 0 = sequence complete
+    cfgNextStep := 0,  // sequence complete
     inpStepTimerSeconds := StepTimerSeconds,
     inpRetry := RetrySignal,
     inpStepPermissives := step5002Perms,

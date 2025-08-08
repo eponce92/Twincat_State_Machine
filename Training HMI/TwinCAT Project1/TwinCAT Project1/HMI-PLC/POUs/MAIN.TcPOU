@@ -47,6 +47,12 @@ IF currentStep.Step = 0 THEN
     ELSIF fbStateMachine.Status.Aborting THEN
         NextStep := 5000;  // Start aborting sequence
         smCommands.CompleteState := FALSE;
+    ELSIF fbStateMachine.Status.Pausing THEN
+        NextStep := 4000;  // Start pausing sequence
+        smCommands.CompleteState := FALSE;
+    ELSIF fbStateMachine.Status.Proceeding THEN
+        NextStep := 6000;  // Start proceeding sequence
+        smCommands.CompleteState := FALSE;
     ELSE
         // No initial step needed
     END_IF;
@@ -78,7 +84,7 @@ _1000_PRG_Homing(
     StepTimerSeconds := REAL_TO_DINT(fbStateMachine.StepInfo.StepTimerSeconds),
     RetrySignal := fbStateMachine.outRetry,
     StateMachineStatus := fbStateMachine.Status,
-	NextStep := NextStep,
+    NextStep := NextStep
 );
 
 _3000_PRG_Running(
@@ -86,7 +92,7 @@ _3000_PRG_Running(
     StepTimerSeconds := REAL_TO_DINT(fbStateMachine.StepInfo.StepTimerSeconds),
     RetrySignal := fbStateMachine.outRetry,
     StateMachineStatus := fbStateMachine.Status,
-	NextStep := NextStep,
+    NextStep := NextStep
 );
 
 _2000_PRG_Stopping(
@@ -94,7 +100,7 @@ _2000_PRG_Stopping(
     StepTimerSeconds := REAL_TO_DINT(fbStateMachine.StepInfo.StepTimerSeconds),
     RetrySignal := fbStateMachine.outRetry,
     StateMachineStatus := fbStateMachine.Status,
-	NextStep := NextStep,
+    NextStep := NextStep
 );
 
 _5000_PRG_Aborting(
@@ -102,27 +108,26 @@ _5000_PRG_Aborting(
     StepTimerSeconds := REAL_TO_DINT(fbStateMachine.StepInfo.StepTimerSeconds),
     RetrySignal := fbStateMachine.outRetry,
     StateMachineStatus := fbStateMachine.Status,
-	NextStep := NextStep,
+    NextStep := NextStep
 );
 
+_4000_PRG_Pausing(
+    CurrentStep := currentStep,
+    StepTimerSeconds := REAL_TO_DINT(fbStateMachine.StepInfo.StepTimerSeconds),
+    RetrySignal := fbStateMachine.outRetry,
+    StateMachineStatus := fbStateMachine.Status,
+    NextStep := NextStep
+);
 
+_6000_PRG_Proceeding(
+    CurrentStep := currentStep,
+    StepTimerSeconds := REAL_TO_DINT(fbStateMachine.StepInfo.StepTimerSeconds),
+    RetrySignal := fbStateMachine.outRetry,
+    StateMachineStatus := fbStateMachine.Status,
+    NextStep := NextStep
+);
 
-
-//=============================================================================
-// SEQUENCE COMPLETED
-//=============================================================================
-
-IF	( fbStateMachine.Status.Aborting OR
-	fbStateMachine.Status.Homing OR	
-	fbStateMachine.Status.Running OR	
-	fbStateMachine.Status.Stopping OR
-	fbStateMachine.Status.Pausing OR	
-	fbStateMachine.Status.Proceeding ) AND
-	currentStep.Step = 999 THEN
-	
-	smCommands.CompleteState := TRUE;	
-	
-END_IF;]]></ST>
+]]></ST>
     </Implementation>
     <LineIds Name="MAIN">
       <LineId Id="1036" Count="2" />
@@ -166,5 +171,5 @@ END_IF;]]></ST>
       <LineId Id="96" Count="3" />
       <LineId Id="1216" Count="0" />
     </LineIds>
-  </POU>
+    </POU>
 </TcPlcObject>

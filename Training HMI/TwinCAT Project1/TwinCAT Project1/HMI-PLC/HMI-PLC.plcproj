@@ -43,6 +43,12 @@
     <Compile Include="POUs\_2000_PRG_Stopping.TcPOU">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="POUs\_4000_PRG_Pausing.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\_6000_PRG_Proceeding.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="POUs\VisualizationManager.TcVMO">
       <SubType>Code</SubType>
     </Compile>
