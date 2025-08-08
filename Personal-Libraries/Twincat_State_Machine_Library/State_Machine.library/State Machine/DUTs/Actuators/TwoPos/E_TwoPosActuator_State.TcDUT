@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.13">
+  <DUT Name="E_TwoPosActuator_State" Id="{5f0c8d09-0da9-4c5e-8f1e-d9d4b032a0f7}">
+    <Declaration><![CDATA[TYPE E_TwoPosActuator_State :
+(
+    Undefined := 0,
+    Retracted := 1,
+    Advancing := 2,
+    Advanced := 3,
+    Retracting := 4,
+    Fault := 5
+);
+END_TYPE]]></Declaration>
+  </DUT>
+</TcPlcObject>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.13">
+  <DUT Name="ST_TwoPosActuator_Cfg" Id="{f0b9c1dd-667a-4f59-83de-14c1286ec7c9}">
+    <Declaration><![CDATA[TYPE ST_TwoPosActuator_Cfg :
+STRUCT
+    cfgAdvTimeoutS : INT := 3;         // Advance timeout (s)
+    cfgRtrTimeoutS : INT := 3;         // Retract timeout (s)
+    cfgHoldAtAdvanced : BOOL := FALSE; // Hold advance valve when advanced
+    cfgHoldAtRetracted : BOOL := FALSE;// Hold retract valve when retracted
+END_STRUCT
+END_TYPE]]></Declaration>
+  </DUT>
+</TcPlcObject>
