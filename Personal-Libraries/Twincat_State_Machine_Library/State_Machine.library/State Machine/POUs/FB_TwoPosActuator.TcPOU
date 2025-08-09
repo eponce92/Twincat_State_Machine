@@ -5,15 +5,17 @@
 FUNCTION_BLOCK FB_TwoPosActuator
 VAR_INPUT
     EnableIn : BOOL := TRUE;            // Enable input for the function block
-    inAutomatic : BOOL := TRUE;         // Mode selection: TRUE=Auto, FALSE=Manual
+    inWorkingMode : BOOL := TRUE;       // Working mode: TRUE=Auto, FALSE=Manual
     
-    // Program commands (automatic mode)
+    // Program commands (automatic mode only)
     pcmdAdvance : BOOL;                 // Program command to advance
     pcmdRetract : BOOL;                 // Program command to retract
+    pcmdAllOff : BOOL;                  // Program command to turn all outputs off
     
-    // Operator commands (manual mode)
+    // Operator commands (manual mode only)
     ocmdAdvance : BOOL;                 // Operator command to advance
     ocmdRetract : BOOL;                 // Operator command to retract
+    ocmdAllOff : BOOL;                  // Operator command to turn all outputs off
     
     // Reset command (both modes)
     cmdReset : BOOL;                    // Reset fault command
@@ -52,6 +54,7 @@ VAR
     // Command processing
     activeAdvanceCmd : BOOL;            // Active advance command after mode selection
     activeRetractCmd : BOOL;            // Active retract command after mode selection
+    activeAllOffCmd : BOOL;             // Active all off command after mode selection
     
     // Edge detection
     rTrigAdvanced : R_TRIG;            // Rising edge for advanced position
@@ -85,34 +88,52 @@ IF EnableIn THEN
     // Command Mode Selection and Conflict Detection
     //-------------------------------------------------------------------------
     
-    // Select active commands based on mode
-    IF inAutomatic THEN
+    // Select active commands based on working mode
+    IF inWorkingMode THEN
+        // Automatic mode - only listen to program commands
         activeAdvanceCmd := pcmdAdvance;
         activeRetractCmd := pcmdRetract;
+        activeAllOffCmd := pcmdAllOff;
     ELSE
+        // Manual mode - listen to operator commands (both input and HMI)
         activeAdvanceCmd := ocmdAdvance OR HMI.ocmdAdvance;
         activeRetractCmd := ocmdRetract OR HMI.ocmdRetract;
+        activeAllOffCmd := ocmdAllOff OR HMI.ocmdAllOff;
     END_IF;
     
-    // Clear HMI commands after reading
-    IF HMI.ocmdAdvance THEN
-        HMI.ocmdAdvance := FALSE;
+    // Clear HMI commands after reading (only in manual mode)
+    IF NOT inWorkingMode THEN
+        IF HMI.ocmdAdvance THEN
+            HMI.ocmdAdvance := FALSE;
+        END_IF;
+        
+        IF HMI.ocmdRetract THEN
+            HMI.ocmdRetract := FALSE;
+        END_IF;
+        
+        IF HMI.ocmdAllOff THEN
+            HMI.ocmdAllOff := FALSE;
+        END_IF;
     END_IF;
     
-    IF HMI.ocmdRetract THEN
-        HMI.ocmdRetract := FALSE;
-    END_IF;
-    
-    // Detect conflicting commands
+    // Detect conflicting commands (advance and retract cannot be active together)
     commandConflict := activeAdvanceCmd AND activeRetractCmd;
     
     // If conflicting commands detected, clear both and fault
     IF commandConflict THEN
         activeAdvanceCmd := FALSE;
         activeRetractCmd := FALSE;
+        activeAllOffCmd := FALSE;
         currentState := E_TwoPosActuator_State.Fault;
         Status.faultCode := E_TwoPosActuator_Fault.ConflictingCommands;
         faultLatched := TRUE;
+    END_IF;
+    
+    // Handle All Off command - overrides other commands and forces safe state
+    IF activeAllOffCmd THEN
+        activeAdvanceCmd := FALSE;
+        activeRetractCmd := FALSE;
+        // Note: All Off doesn't change state, just forces outputs off
     END_IF;
     
     //-------------------------------------------------------------------------
@@ -181,6 +202,12 @@ IF EnableIn THEN
             IO.outValveAdvance := FALSE;
             IO.outValveRetract := FALSE;
             
+            // Override outputs if All Off command is active
+            IF activeAllOffCmd THEN
+                IO.outValveAdvance := FALSE;
+                IO.outValveRetract := FALSE;
+            END_IF;
+            
             // Check for fault conditions first
             IF bothFeedbackActive THEN
                 currentState := E_TwoPosActuator_State.Fault;
@@ -210,7 +237,7 @@ IF EnableIn THEN
             //---------------------------------------------------------------------
             
             // Handle hold configuration
-            IF cfg.cfgHoldAtRetracted THEN
+            IF cfg.cfgHoldAtRetracted AND NOT activeAllOffCmd THEN
                 IO.outValveRetract := TRUE;
             ELSE
                 IO.outValveRetract := FALSE;
@@ -245,7 +272,7 @@ IF EnableIn THEN
             //---------------------------------------------------------------------
             
             // Energize advance valve
-            IO.outValveAdvance := TRUE;
+            IO.outValveAdvance := NOT activeAllOffCmd;
             IO.outValveRetract := FALSE;
             
             // Run advance timer
@@ -284,7 +311,7 @@ IF EnableIn THEN
             //---------------------------------------------------------------------
             
             // Handle hold configuration
-            IF cfg.cfgHoldAtAdvanced THEN
+            IF cfg.cfgHoldAtAdvanced AND NOT activeAllOffCmd THEN
                 IO.outValveAdvance := TRUE;
             ELSE
                 IO.outValveAdvance := FALSE;
@@ -319,7 +346,7 @@ IF EnableIn THEN
             //---------------------------------------------------------------------
             
             // Energize retract valve
-            IO.outValveRetract := TRUE;
+            IO.outValveRetract := NOT activeAllOffCmd;
             IO.outValveAdvance := FALSE;
             
             // Run retract timer
