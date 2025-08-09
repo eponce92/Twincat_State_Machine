@@ -9,6 +9,11 @@ STRUCT
     // Configuration from HMI
     cfg : ST_TwoPosActuator_Cfg;
     
+    // Human-readable strings for HMI display
+    stateString : STRING(80);      // Current state as text
+    faultString : STRING(80);      // Current fault as text
+    lastFaultString : STRING(80);  // Last fault as text
+    
     // Operator commands from HMI
     ocmdAdvance : BOOL;         // Operator command to advance
     ocmdRetract : BOOL;         // Operator command to retract

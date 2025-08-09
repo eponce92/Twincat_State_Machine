@@ -422,6 +422,68 @@ IF EnableIn THEN
     // Copy status to HMI
     HMI.sts := Status;
     
+    // Generate human-readable state string
+    CASE currentState OF
+        E_TwoPosActuator_State.Undefined:
+            HMI.stateString := 'Undefined';
+        E_TwoPosActuator_State.Retracted:
+            HMI.stateString := 'Retracted';
+        E_TwoPosActuator_State.Advancing:
+            HMI.stateString := 'Advancing';
+        E_TwoPosActuator_State.Advanced:
+            HMI.stateString := 'Advanced';
+        E_TwoPosActuator_State.Retracting:
+            HMI.stateString := 'Retracting';
+        E_TwoPosActuator_State.Fault:
+            HMI.stateString := 'Fault';
+    ELSE
+        HMI.stateString := 'Unknown';
+    END_CASE;
+    
+    // Generate human-readable fault string
+    CASE Status.faultCode OF
+        E_TwoPosActuator_Fault.None:
+            HMI.faultString := 'No Fault';
+        E_TwoPosActuator_Fault.AdvanceTimeout:
+            HMI.faultString := 'Advance Timeout';
+        E_TwoPosActuator_Fault.RetractTimeout:
+            HMI.faultString := 'Retract Timeout';
+        E_TwoPosActuator_Fault.BothFeedbackOn:
+            HMI.faultString := 'Both Feedbacks Active';
+        E_TwoPosActuator_Fault.UndefinedState:
+            HMI.faultString := 'Position Undefined';
+        E_TwoPosActuator_Fault.PermissivesNotOK:
+            HMI.faultString := 'Permissives Not OK';
+        E_TwoPosActuator_Fault.ConflictingCommands:
+            HMI.faultString := 'Conflicting Commands';
+        E_TwoPosActuator_Fault.NoFeedback:
+            HMI.faultString := 'No Position Feedback';
+    ELSE
+        HMI.faultString := 'Unknown Fault';
+    END_CASE;
+    
+    // Generate human-readable last fault string
+    CASE Status.lastFaultCode OF
+        E_TwoPosActuator_Fault.None:
+            HMI.lastFaultString := 'No Previous Fault';
+        E_TwoPosActuator_Fault.AdvanceTimeout:
+            HMI.lastFaultString := 'Last: Advance Timeout';
+        E_TwoPosActuator_Fault.RetractTimeout:
+            HMI.lastFaultString := 'Last: Retract Timeout';
+        E_TwoPosActuator_Fault.BothFeedbackOn:
+            HMI.lastFaultString := 'Last: Both Feedbacks Active';
+        E_TwoPosActuator_Fault.UndefinedState:
+            HMI.lastFaultString := 'Last: Position Undefined';
+        E_TwoPosActuator_Fault.PermissivesNotOK:
+            HMI.lastFaultString := 'Last: Permissives Not OK';
+        E_TwoPosActuator_Fault.ConflictingCommands:
+            HMI.lastFaultString := 'Last: Conflicting Commands';
+        E_TwoPosActuator_Fault.NoFeedback:
+            HMI.lastFaultString := 'Last: No Position Feedback';
+    ELSE
+        HMI.lastFaultString := 'Last: Unknown Fault';
+    END_CASE;
+    
 ELSE
     // Disabled - de-energize outputs and reset timers
     IO.outValveAdvance := FALSE;
