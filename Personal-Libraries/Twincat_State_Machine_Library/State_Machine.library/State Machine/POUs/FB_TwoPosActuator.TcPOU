@@ -4,32 +4,20 @@
     <Declaration><![CDATA[{attribute 'hide_all_locals'}
 FUNCTION_BLOCK FB_TwoPosActuator
 VAR_INPUT
-    EnableIn : BOOL := TRUE;           // Enable execution
     // Live permissive bits for Advance and Retract
     inPermAdv : INT := -1;             // -1 means all OK
     inPermRtr : INT := -1;
-    // Mode selection (typically wired to StateMachine.Status.Automatic)
-    inAutomatic : BOOL;                 // TRUE=auto (use pcmd*), FALSE=manual (use ocmd*)
-    // Commands (program and operator)
-    pcmdAdvance : BOOL;                 // Program command
-    pcmdRetract : BOOL;
-    ocmdAdvance : BOOL;                 // Operator command
-    ocmdRetract : BOOL;
-    cmdReset    : BOOL;                 // Reset latched fault
-    // Configuration
-    cfg : ST_TwoPosActuator_Cfg;
+    // Reset command
+    cmdReset : BOOL;                   // Reset latched fault
 END_VAR
 
 VAR_IN_OUT
-    IO : ST_TwoPosActuator_IO;         // IO mapping
-    permAdvHMI : ST_PermIntlk_HMI;     // HMI-bound permissives for Advance
-    permRtrHMI : ST_PermIntlk_HMI;     // HMI-bound permissives for Retract
-    HMI : ST_TwoPosActuator_HMI;       // HMI data for faceplate
+    actuator : ST_TwoPosActuator;      // Main actuator data structure
+    IO : ST_TwoPosActuator_IO;         // IO mapping (separate for AT declarations)
 END_VAR
 
 VAR_OUTPUT
     EnableOut : BOOL;
-    sts : ST_TwoPosActuator_Sts;       // Public status
 END_VAR
 
 VAR
@@ -64,8 +52,8 @@ END_VAR
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[
-EnableOut := EnableIn;
-IF NOT EnableIn THEN
+EnableOut := actuator.enable;
+IF NOT actuator.enable THEN
     // De-energize outputs when disabled
     IO.outValveAdvance := FALSE;
     IO.outValveRetract := FALSE;
@@ -73,21 +61,21 @@ IF NOT EnableIn THEN
 END_IF;
 
 // Evaluate permissives (HMI supplies cfg, we write back sts)
-fbPermAdv(inPermissives := inPermAdv, cfg := permAdvHMI.cfg);
-permAdvHMI.sts.OK := fbPermAdv.stsOK;
-permAdvHMI.sts.PermIntlk := fbPermAdv.PermStatus;
+fbPermAdv(inPermissives := inPermAdv, cfg := actuator.permAdvance.cfg);
+actuator.permAdvance.sts.OK := fbPermAdv.stsOK;
+actuator.permAdvance.sts.PermIntlk := fbPermAdv.PermStatus;
 
-fbPermRtr(inPermissives := inPermRtr, cfg := permRtrHMI.cfg);
-permRtrHMI.sts.OK := fbPermRtr.stsOK;
-permRtrHMI.sts.PermIntlk := fbPermRtr.PermStatus;
+fbPermRtr(inPermissives := inPermRtr, cfg := actuator.permRetract.cfg);
+actuator.permRetract.sts.OK := fbPermRtr.stsOK;
+actuator.permRetract.sts.PermIntlk := fbPermRtr.PermStatus;
 
 // Read feedbacks and simple plausibility
 bothFbk := IO.inFbkAdvanced AND IO.inFbkRetracted;
 noneFbk := NOT IO.inFbkAdvanced AND NOT IO.inFbkRetracted;
 
 // Select command source by mode (auto: pcmd*, manual: ocmd*)
-reqAdvance := (inAutomatic AND pcmdAdvance) OR ((NOT inAutomatic) AND ocmdAdvance);
-reqRetract := (inAutomatic AND pcmdRetract) OR ((NOT inAutomatic) AND ocmdRetract);
+reqAdvance := (actuator.automatic AND actuator.pcmdAdvance) OR ((NOT actuator.automatic) AND actuator.ocmdAdvance);
+reqRetract := (actuator.automatic AND actuator.pcmdRetract) OR ((NOT actuator.automatic) AND actuator.ocmdRetract);
 
 // Edges on selected commands only
 rTrigAdv(CLK := reqAdvance);
@@ -95,166 +83,166 @@ rTrigRtr(CLK := reqRetract);
 rTrigReset(CLK := cmdReset);
 
 IF rTrigReset.Q THEN
-    sts.stsFaulted := FALSE;
-    sts.faultCode := E_TwoPosActuator_Fault.None;
+    actuator.stsFaulted := FALSE;
+    actuator.faultCode := E_TwoPosActuator_Fault.None;
 END_IF;
 
 // If faulted, drop outputs and stay in Fault until reset
-IF sts.stsFaulted THEN
+IF actuator.stsFaulted THEN
     IO.outValveAdvance := FALSE;
     IO.outValveRetract := FALSE;
-    sts.state := E_TwoPosActuator_State.Fault;
+    actuator.state := E_TwoPosActuator_State.Fault;
     RETURN;
 END_IF;
 
 // Determine sanitized commands, apply permissives
-cmdDoAdvance := reqAdvance AND permAdvHMI.sts.OK;
-cmdDoRetract := reqRetract AND permRtrHMI.sts.OK;
+cmdDoAdvance := reqAdvance AND actuator.permAdvance.sts.OK;
+cmdDoRetract := reqRetract AND actuator.permRetract.sts.OK;
 
 // Conflicting commands (after mode selection)
 IF reqAdvance AND reqRetract THEN
-    sts.stsFaulted := TRUE;
-    sts.faultCode := E_TwoPosActuator_Fault.ConflictingCommands;
-    sts.lastFaultCode := sts.faultCode;
+    actuator.stsFaulted := TRUE;
+    actuator.faultCode := E_TwoPosActuator_Fault.ConflictingCommands;
+    actuator.lastFaultCode := actuator.faultCode;
     IO.outValveAdvance := FALSE;
     IO.outValveRetract := FALSE;
-    sts.state := E_TwoPosActuator_State.Fault;
+    actuator.state := E_TwoPosActuator_State.Fault;
     RETURN;
 END_IF;
 
 // Undefined detection at rest
 IF bothFbk THEN
-    sts.stsFaulted := TRUE;
-    sts.faultCode := E_TwoPosActuator_Fault.BothFeedbacksOn;
-    sts.lastFaultCode := sts.faultCode;
+    actuator.stsFaulted := TRUE;
+    actuator.faultCode := E_TwoPosActuator_Fault.BothFeedbacksOn;
+    actuator.lastFaultCode := actuator.faultCode;
     IO.outValveAdvance := FALSE;
     IO.outValveRetract := FALSE;
-    sts.state := E_TwoPosActuator_State.Fault;
+    actuator.state := E_TwoPosActuator_State.Fault;
     RETURN;
 END_IF;
 
 // Reset public status flags; will be set by state logic
-sts.stsAdvanced := FALSE; sts.stsRetracted := FALSE; sts.stsMoving := FALSE;
+actuator.stsAdvanced := FALSE; actuator.stsRetracted := FALSE; actuator.stsMoving := FALSE;
 
 // Initial state inference
 IF IO.inFbkRetracted AND NOT IO.inFbkAdvanced THEN
-    sts.state := E_TwoPosActuator_State.Retracted;
+    actuator.state := E_TwoPosActuator_State.Retracted;
 ELSIF IO.inFbkAdvanced AND NOT IO.inFbkRetracted THEN
-    sts.state := E_TwoPosActuator_State.Advanced;
+    actuator.state := E_TwoPosActuator_State.Advanced;
 ELSIF noneFbk THEN
-    sts.state := E_TwoPosActuator_State.Undefined;
+    actuator.state := E_TwoPosActuator_State.Undefined;
 ELSE
     // keep
 END_IF;
 
 // Motion and control
-CASE sts.state OF
+CASE actuator.state OF
     E_TwoPosActuator_State.Retracted:
-        sts.stsRetracted := TRUE; sts.stsAdvanced := FALSE; sts.stsMoving := FALSE;
-        IO.outValveRetract := cfg.cfgHoldAtRetracted; // maintain per config
+        actuator.stsRetracted := TRUE; actuator.stsAdvanced := FALSE; actuator.stsMoving := FALSE;
+        IO.outValveRetract := actuator.cfg.cfgHoldAtRetracted; // maintain per config
         IO.outValveAdvance := FALSE;
 
         // Loss of both feedbacks at rest is a fault
         IF noneFbk THEN
-            sts.stsFaulted := TRUE;
-            sts.faultCode := E_TwoPosActuator_Fault.NoFeedbackAtRest;
-            sts.lastFaultCode := sts.faultCode;
+            actuator.stsFaulted := TRUE;
+            actuator.faultCode := E_TwoPosActuator_Fault.NoFeedbackAtRest;
+            actuator.lastFaultCode := actuator.faultCode;
             IO.outValveAdvance := FALSE; IO.outValveRetract := FALSE;
-            sts.state := E_TwoPosActuator_State.Fault;
+            actuator.state := E_TwoPosActuator_State.Fault;
             RETURN;
         END_IF;
 
         IF cmdDoAdvance THEN
             // Start advance
-            sts.state := E_TwoPosActuator_State.Advancing;
-            sts.stsMoving := TRUE;
+            actuator.state := E_TwoPosActuator_State.Advancing;
+            actuator.stsMoving := TRUE;
             IO.outValveAdvance := TRUE;
             IO.outValveRetract := FALSE;
-            motionTimeoutMs := INT_TO_TIME(cfg.cfgAdvTimeoutS) * T#1S;
+            motionTimeoutMs := INT_TO_TIME(actuator.cfg.cfgAdvTimeoutS) * T#1S;
             tonMotion(IN := TRUE, PT := motionTimeoutMs);
         END_IF;
 
     E_TwoPosActuator_State.Advanced:
-        sts.stsAdvanced := TRUE; sts.stsRetracted := FALSE; sts.stsMoving := FALSE;
-        IO.outValveAdvance := cfg.cfgHoldAtAdvanced;
+        actuator.stsAdvanced := TRUE; actuator.stsRetracted := FALSE; actuator.stsMoving := FALSE;
+        IO.outValveAdvance := actuator.cfg.cfgHoldAtAdvanced;
         IO.outValveRetract := FALSE;
 
         // Loss of both feedbacks at rest is a fault
         IF noneFbk THEN
-            sts.stsFaulted := TRUE;
-            sts.faultCode := E_TwoPosActuator_Fault.NoFeedbackAtRest;
-            sts.lastFaultCode := sts.faultCode;
+            actuator.stsFaulted := TRUE;
+            actuator.faultCode := E_TwoPosActuator_Fault.NoFeedbackAtRest;
+            actuator.lastFaultCode := actuator.faultCode;
             IO.outValveAdvance := FALSE; IO.outValveRetract := FALSE;
-            sts.state := E_TwoPosActuator_State.Fault;
+            actuator.state := E_TwoPosActuator_State.Fault;
             RETURN;
         END_IF;
 
         IF cmdDoRetract THEN
             // Start retract
-            sts.state := E_TwoPosActuator_State.Retracting;
-            sts.stsMoving := TRUE;
+            actuator.state := E_TwoPosActuator_State.Retracting;
+            actuator.stsMoving := TRUE;
             IO.outValveAdvance := FALSE;
             IO.outValveRetract := TRUE;
-            motionTimeoutMs := INT_TO_TIME(cfg.cfgRtrTimeoutS) * T#1S;
+            motionTimeoutMs := INT_TO_TIME(actuator.cfg.cfgRtrTimeoutS) * T#1S;
             tonMotion(IN := TRUE, PT := motionTimeoutMs);
         END_IF;
 
     E_TwoPosActuator_State.Advancing:
-        sts.stsRetracted := FALSE; sts.stsAdvanced := FALSE; sts.stsMoving := TRUE;
+        actuator.stsRetracted := FALSE; actuator.stsAdvanced := FALSE; actuator.stsMoving := TRUE;
         IO.outValveAdvance := TRUE; IO.outValveRetract := FALSE;
         tonMotion(IN := TRUE, PT := motionTimeoutMs);
         
         // Invalid both-feedbacks-on during motion
         IF bothFbk THEN
-            sts.stsFaulted := TRUE;
-            sts.faultCode := E_TwoPosActuator_Fault.BothFeedbacksOn;
-            sts.lastFaultCode := sts.faultCode;
+            actuator.stsFaulted := TRUE;
+            actuator.faultCode := E_TwoPosActuator_Fault.BothFeedbacksOn;
+            actuator.lastFaultCode := actuator.faultCode;
             IO.outValveAdvance := FALSE; IO.outValveRetract := FALSE;
-            sts.state := E_TwoPosActuator_State.Fault;
+            actuator.state := E_TwoPosActuator_State.Fault;
             RETURN;
         END_IF;
 
         // Success condition
         IF IO.inFbkAdvanced AND NOT IO.inFbkRetracted THEN
-            sts.state := E_TwoPosActuator_State.Advanced;
-            sts.stsMoving := FALSE;
+            actuator.state := E_TwoPosActuator_State.Advanced;
+            actuator.stsMoving := FALSE;
             tonMotion(IN := FALSE, PT := motionTimeoutMs);
         ELSIF tonMotion.Q THEN
             // Timeout
-            sts.stsFaulted := TRUE;
-            sts.faultCode := E_TwoPosActuator_Fault.AdvanceTimeout;
-            sts.lastFaultCode := sts.faultCode;
+            actuator.stsFaulted := TRUE;
+            actuator.faultCode := E_TwoPosActuator_Fault.AdvanceTimeout;
+            actuator.lastFaultCode := actuator.faultCode;
             IO.outValveAdvance := FALSE; IO.outValveRetract := FALSE;
-            sts.state := E_TwoPosActuator_State.Fault;
+            actuator.state := E_TwoPosActuator_State.Fault;
         END_IF;
 
     E_TwoPosActuator_State.Retracting:
-        sts.stsRetracted := FALSE; sts.stsAdvanced := FALSE; sts.stsMoving := TRUE;
+        actuator.stsRetracted := FALSE; actuator.stsAdvanced := FALSE; actuator.stsMoving := TRUE;
         IO.outValveAdvance := FALSE; IO.outValveRetract := TRUE;
         tonMotion(IN := TRUE, PT := motionTimeoutMs);
         
         // Invalid both-feedbacks-on during motion
         IF bothFbk THEN
-            sts.stsFaulted := TRUE;
-            sts.faultCode := E_TwoPosActuator_Fault.BothFeedbacksOn;
-            sts.lastFaultCode := sts.faultCode;
+            actuator.stsFaulted := TRUE;
+            actuator.faultCode := E_TwoPosActuator_Fault.BothFeedbacksOn;
+            actuator.lastFaultCode := actuator.faultCode;
             IO.outValveAdvance := FALSE; IO.outValveRetract := FALSE;
-            sts.state := E_TwoPosActuator_State.Fault;
+            actuator.state := E_TwoPosActuator_State.Fault;
             RETURN;
         END_IF;
 
         // Success condition
         IF IO.inFbkRetracted AND NOT IO.inFbkAdvanced THEN
-            sts.state := E_TwoPosActuator_State.Retracted;
-            sts.stsMoving := FALSE;
+            actuator.state := E_TwoPosActuator_State.Retracted;
+            actuator.stsMoving := FALSE;
             tonMotion(IN := FALSE, PT := motionTimeoutMs);
         ELSIF tonMotion.Q THEN
             // Timeout
-            sts.stsFaulted := TRUE;
-            sts.faultCode := E_TwoPosActuator_Fault.RetractTimeout;
-            sts.lastFaultCode := sts.faultCode;
+            actuator.stsFaulted := TRUE;
+            actuator.faultCode := E_TwoPosActuator_Fault.RetractTimeout;
+            actuator.lastFaultCode := actuator.faultCode;
             IO.outValveAdvance := FALSE; IO.outValveRetract := FALSE;
-            sts.state := E_TwoPosActuator_State.Fault;
+            actuator.state := E_TwoPosActuator_State.Fault;
         END_IF;
 
     E_TwoPosActuator_State.Undefined, E_TwoPosActuator_State.Fault:
@@ -263,46 +251,46 @@ CASE sts.state OF
             // Try to re-evaluate to a safe rest state using feedback
             IF IO.inFbkRetracted XOR IO.inFbkAdvanced THEN
                 IF IO.inFbkRetracted THEN
-                    sts.state := E_TwoPosActuator_State.Retracted;
+                    actuator.state := E_TwoPosActuator_State.Retracted;
                 ELSE
-                    sts.state := E_TwoPosActuator_State.Advanced;
+                    actuator.state := E_TwoPosActuator_State.Advanced;
                 END_IF;
-                sts.stsFaulted := FALSE; sts.faultCode := E_TwoPosActuator_Fault.None;
+                actuator.stsFaulted := FALSE; actuator.faultCode := E_TwoPosActuator_Fault.None;
             END_IF;
         END_IF;
 END_CASE;
 
 // If a command was requested but permissives not OK, fault
-IF reqAdvance AND NOT permAdvHMI.sts.OK THEN
-    sts.stsFaulted := TRUE;
-    sts.faultCode := E_TwoPosActuator_Fault.PermissivesNotOK;
-    sts.lastFaultCode := sts.faultCode;
+IF reqAdvance AND NOT actuator.permAdvance.sts.OK THEN
+    actuator.stsFaulted := TRUE;
+    actuator.faultCode := E_TwoPosActuator_Fault.PermissivesNotOK;
+    actuator.lastFaultCode := actuator.faultCode;
 END_IF;
-IF reqRetract AND NOT permRtrHMI.sts.OK THEN
-    sts.stsFaulted := TRUE;
-    sts.faultCode := E_TwoPosActuator_Fault.PermissivesNotOK;
-    sts.lastFaultCode := sts.faultCode;
+IF reqRetract AND NOT actuator.permRetract.sts.OK THEN
+    actuator.stsFaulted := TRUE;
+    actuator.faultCode := E_TwoPosActuator_Fault.PermissivesNotOK;
+    actuator.lastFaultCode := actuator.faultCode;
 END_IF;
 
 //------------------------------------------------------------------------------
 // HMI mapping
 //------------------------------------------------------------------------------
-HMI.sts.Advanced := sts.stsAdvanced;
-HMI.sts.Retracted := sts.stsRetracted;
-HMI.sts.Moving := sts.stsMoving;
-HMI.sts.Faulted := sts.stsFaulted;
+actuator.HMI.stsAdvanced := actuator.stsAdvanced;
+actuator.HMI.stsRetracted := actuator.stsRetracted;
+actuator.HMI.stsMoving := actuator.stsMoving;
+actuator.HMI.stsFaulted := actuator.stsFaulted;
 
-CASE sts.state OF
-    E_TwoPosActuator_State.Undefined: HMI.sts.StateString := 'Undefined';
-    E_TwoPosActuator_State.Retracted: HMI.sts.StateString := 'Retracted';
-    E_TwoPosActuator_State.Advancing: HMI.sts.StateString := 'Advancing';
-    E_TwoPosActuator_State.Advanced:  HMI.sts.StateString := 'Advanced';
-    E_TwoPosActuator_State.Retracting:HMI.sts.StateString := 'Retracting';
-    E_TwoPosActuator_State.Fault:     HMI.sts.StateString := 'Fault';
+CASE actuator.state OF
+    E_TwoPosActuator_State.Undefined: actuator.HMI.stsStateString := 'Undefined';
+    E_TwoPosActuator_State.Retracted: actuator.HMI.stsStateString := 'Retracted';
+    E_TwoPosActuator_State.Advancing: actuator.HMI.stsStateString := 'Advancing';
+    E_TwoPosActuator_State.Advanced:  actuator.HMI.stsStateString := 'Advanced';
+    E_TwoPosActuator_State.Retracting:actuator.HMI.stsStateString := 'Retracting';
+    E_TwoPosActuator_State.Fault:     actuator.HMI.stsStateString := 'Fault';
 END_CASE;
 
 // Fault string human readable
-CASE sts.faultCode OF
+CASE actuator.faultCode OF
     E_TwoPosActuator_Fault.None:              faultBuf := '';
     E_TwoPosActuator_Fault.PermissivesNotOK:  faultBuf := 'Permissives not OK';
     E_TwoPosActuator_Fault.ConflictingCommands: faultBuf := 'Conflicting commands';
@@ -312,8 +300,8 @@ CASE sts.faultCode OF
     E_TwoPosActuator_Fault.NoFeedbackAtRest:  faultBuf := 'No feedback at rest';
     E_TwoPosActuator_Fault.UndefinedState:    faultBuf := 'Undefined state';
 END_CASE;
-HMI.faultCode := sts.faultCode;
-HMI.faultString := faultBuf;
+actuator.HMI.faultCode := actuator.faultCode;
+actuator.HMI.faultString := faultBuf;
 
 ]]></ST>
     </Implementation>

@@ -3,7 +3,14 @@
   <DUT Name="ST_TwoPosActuator_HMI" Id="{63b6ee59-9667-4f23-9c14-25ae27d6f3f5}">
     <Declaration><![CDATA[TYPE ST_TwoPosActuator_HMI :
 STRUCT
-    sts : ST_TwoPosActuator_HMI_sts;
+    // Status indicators for HMI display
+    stsAdvanced : BOOL;
+    stsRetracted : BOOL;
+    stsMoving : BOOL;
+    stsFaulted : BOOL;
+    stsStateString : STRING(40);
+    
+    // Fault information
     faultCode : E_TwoPosActuator_Fault;
     faultString : STRING(80);
 END_STRUCT
