@@ -19,9 +19,27 @@
     <Company>Home</Company>
     <Released>false</Released>
     <Title>State Machine Twincat</Title>
-    <ProjectVersion>1.0.0.2</ProjectVersion>
+    <ProjectVersion>1.0.0.4</ProjectVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="DUTs\Actuators\TwoPos\E_TwoPosActuator_Fault.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\Actuators\TwoPos\E_TwoPosActuator_State.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\Actuators\TwoPos\ST_TwoPosActuator_Cfg.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\Actuators\TwoPos\ST_TwoPosActuator_HMI.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\Actuators\TwoPos\ST_TwoPosActuator_IO.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\Actuators\TwoPos\ST_TwoPosActuator_Sts.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="DUTs\Permissives\ST_PermIntlk_cfg.TcDUT">
       <SubType>Code</SubType>
     </Compile>
@@ -82,29 +100,6 @@
     <Compile Include="POUs\FB_StateMachine.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <!-- New Actuator DUTs -->
-    <Compile Include="DUTs\Actuators\TwoPos\E_TwoPosActuator_State.TcDUT">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DUTs\Actuators\TwoPos\E_TwoPosActuator_Fault.TcDUT">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DUTs\Actuators\TwoPos\ST_TwoPosActuator_IO.TcDUT">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DUTs\Actuators\TwoPos\ST_TwoPosActuator_Cfg.TcDUT">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DUTs\Actuators\TwoPos\ST_TwoPosActuator_Sts.TcDUT">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DUTs\Actuators\TwoPos\ST_TwoPosActuator_HMI_sts.TcDUT">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DUTs\Actuators\TwoPos\ST_TwoPosActuator_HMI.TcDUT">
-      <SubType>Code</SubType>
-    </Compile>
-    <!-- New Actuator FB -->
     <Compile Include="POUs\FB_TwoPosActuator.TcPOU">
       <SubType>Code</SubType>
     </Compile>
